@@ -1,0 +1,1 @@
+///@desc init vars in "InvCreate" script

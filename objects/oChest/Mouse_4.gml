@@ -1,0 +1,1 @@
+InvToggleAnim(chest);

@@ -1,0 +1,2 @@
+InvDestroy(inventory);
+InvDestroy(equipment);
