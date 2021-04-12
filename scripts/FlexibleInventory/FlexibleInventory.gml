@@ -1,6 +1,6 @@
 function SuperFlexibleInventoryInit() {
 	
-	#region// --- SETTINGS --- (You can change it like you want!)
+	#region --- SETTINGS --- (You can change it like you want!)
 	
 	//Resolution
 	//global.disp_w = display_get_width();
@@ -52,11 +52,7 @@ function SuperFlexibleInventoryInit() {
 	
 	#endregion// -------------------
 	
-	#region // --- DON'T TOUCH ---
-	
-	m_x = 0;
-	m_y = 0;
-	sprite_item_size = sprite_get_width(global.InvItemsSprite);
+	#region --- DON'T TOUCH ---
 	
 	//Main inventory id
 	global.InvMainID = -1;
@@ -349,9 +345,10 @@ function SuperFlexibleInventoryInit() {
 
 #region //===MAIN===//
 
-///@desc Create a new inventory
-///@args width,height,[inv_slots]
 function InvCreate() {
+	///@desc Create a new inventory
+	///@args width,height,[inv_slots]
+	
 	if !layer_exists("Inventories") layer_create(-100, "Inventories");
 	if !layer_exists("items") layer_create(0, "items");
 	if !instance_exists(oInvControl) instance_create_layer(0,0,"Inventories",oInvControl);
@@ -453,48 +450,44 @@ function InvCreate() {
 	}
 }
 
-///@desc Destroy previously created inventory
-function InvDestroy(_inventory) {
-	if instance_exists(_inventory) {
+function InvDestroy(inventory) {
+	///@desc Destroy previously created inventory
 	
-		if ds_exists(_inventory.inv_item, ds_type_grid)
-		ds_grid_destroy(_inventory.inv_item);
+	if instance_exists(inventory) {
 	
-		if surface_exists(_inventory.inv_surf)
-		surface_free(_inventory.inv_surf);
+		if ds_exists(inventory.inv_item, ds_type_grid)
+		ds_grid_destroy(inventory.inv_item);
 	
-		instance_destroy(_inventory);
+		if surface_exists(inventory.inv_surf)
+		surface_free(inventory.inv_surf);
+	
+		instance_destroy(inventory);
 	}
 }
 
-///@desc Open or close inventory
-///@args inventory,[show/hide]
 function InvToggle() {
+	///@desc Open or close inventory
+	///@args inventory,[show/hide]
+	
 	with(argument[0]) {
-	
-		if argument_count > 1
-		inv_show = argument[1];
-		else
-		inv_show = !inv_show;
-	
+		
+		inv_show = argument_count > 1 ? argument[1] : !inv_show;
+		
 		if !inv_show {
 			//free memory on close
-			if surface_exists(inv_surf)
-			surface_free(inv_surf);
+			if surface_exists(inv_surf) surface_free(inv_surf);
 		}
 	}
 }
 
-///@desc Open or close inventory
-///@args inventory,[show/hide]
 function InvToggleAnim() {
+	///@desc Open or close inventory
+	///@args inventory,[show/hide]
+	
 	with(argument[0]) {
-	
-		if argument_count > 1
-		inv_states = argument[1];
-		else
-		inv_states = !inv_states;
-	
+		
+		inv_states = argument_count > 1 ? argument[1] : !inv_states;
+		
 		if inv_states {
 			with(oInventory) {
 				inv_selected = false;
@@ -519,39 +512,41 @@ function InvToggleAnim() {
 	}
 }
 
-///@desc Clear slot
-function InvSlotClear(_slot) {
-	var slot = _slot;
+function InvSlotClear(slot) {
+	///@desc Clear slot
+	
 	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 		inv_item[# slot, i] = 0;
 	}
 }
 
-///@desc add one item to slot in inv
-function InvItemAdd(_inventory, _slot, _item) {
-	with(_inventory) {
-		if !inv_item[# _slot, items_flags.item] {
-			inv_item[# _slot, items_flags.item] = _item;
+function InvItemAdd(inventory, slot, item) {
+	///@desc add one item to slot in inv
+	
+	with(inventory) {
+		if !inv_item[# slot, items_flags.item] {
+			inv_item[# slot, items_flags.item] = item;
 		}
 	
-		if inv_item[# _slot, items_flags.item] == _item
-		if inv_item[# _slot, items_flags.count] < GetProp(inv_item[# _slot, items_flags.item], ALL_PROPS.maxstack) {
-			inv_item[# _slot, items_flags.count]++;
+		if inv_item[# slot, items_flags.item] == item
+		if inv_item[# slot, items_flags.count] < GetProp(inv_item[# slot, items_flags.item], ALL_PROPS.maxstack) {
+			inv_item[# slot, items_flags.count]++;
 			return true;
 		}
 	}
 	return false;
 }
 
-///@desc subtract one item from slot in inv
-function InvItemSub(_inventory, _slot) {
-	with(_inventory) {
-		if inv_item[# _slot, items_flags.item]
-		if inv_item[# _slot, items_flags.count] > 0 {
-			inv_item[# _slot, items_flags.count]--;
+function InvItemSub(inventory, slot) {
+	///@desc subtract one item from slot in inv
 	
-			if inv_item[# _slot, items_flags.count] == 0
-			InvSlotClear(_slot);
+	with(inventory) {
+		if inv_item[# slot, items_flags.item]
+		if inv_item[# slot, items_flags.count] > 0 {
+			inv_item[# slot, items_flags.count]--;
+	
+			if inv_item[# slot, items_flags.count] == 0
+			InvSlotClear(slot);
 		
 			return true;
 		}
@@ -559,57 +554,55 @@ function InvItemSub(_inventory, _slot) {
 	return false;
 }
 
-///@desc Initialize drop data
 function InvDropInit() {
+	///@desc Initialize drop data
+	
 	drop_data = array_create(items_flags.inv_specs_height, 0);
 
 	sprite_index = global.InvItemsSprite;
 	image_speed = 0;
 }
 
-///@desc Drop item from hand (item taken by mouse)
-///@args x,y,data,[count]
 function InvDropHand() {
-
+	///@desc Drop item from hand (item taken by mouse)
+	///@args x,y,data,[count]
+	
 	var _x = argument[0];
 	var _y = argument[1];
 	var _data = argument[2];
-
+	var _count = argument_count > 3 ? argument[3] : _data[@ items_flags.count];
+	
 	if global.ItemInHand[items_flags.item]
-	with (InvDropCreate(_x, _y, 1))
-	{
+	with (InvDropCreate(_x, _y, 1)) {
 		for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 			drop_data[i] = _data[i];
 		}
-	
-		if argument_count > 3 {
-			drop_data[items_flags.count] = argument[3];
-			_data[@ items_flags.count] -= argument[3];
-		} else {
-			_data[@ items_flags.count] = 0;
-		}
-	
+		
+		drop_data[items_flags.count] = _count;
+		_data[@ items_flags.count] -= _count;
+		
 		//if moving item is zero clear
 		if _data[@ items_flags.count] == 0 {
 			for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 				_data[@ i] = 0;
 			}
 		}
-	
+		
 		image_index = drop_data[items_flags.item];
-	
+		
 		return id;
 	}
 }
 
-///@desc Drop item from slot of specified inventory
-///@args inventory,slot,x,y,[count]
 function InvDropSlot() {
-
+	///@desc Drop item from slot of specified inventory
+	///@args inventory,slot,x,y,[count]
+	
 	var _inventory = argument[0];
 	var _slot = argument[1];
 	var _x = argument[2];
 	var _y = argument[3];
+	var _count = argument_count > 4 ? argument[4] : _inventory.inv_item[# _slot, items_flags.count];
 
 	with(_inventory) {
 		if !inv_item[# _slot, items_flags.item] return false;
@@ -618,37 +611,32 @@ function InvDropSlot() {
 		for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 			_drop.drop_data[i] = inv_item[# _slot, i];
 		}
-	
-		if argument_count > 4 {
-			_drop.drop_data[items_flags.count] = argument[4];
-			inv_item[# _slot, items_flags.count] -= argument[4];
-		} else {
-			inv_item[# _slot, items_flags.count] = 0;
-		}
-	
+		
+		_drop.drop_data[items_flags.count] = _count;
+		inv_item[# _slot, items_flags.count] -= _count;
+		
 		//if moving item is zero clear
 		if inv_item[# _slot, items_flags.count] == 0 {
 			InvSlotClear(_slot);
 		}
-	
+		
 		_drop.image_index = _drop.drop_data[items_flags.item];
-	
+		
 		return _drop;
 	}
 }
 
-///@desc Create drop item with specified data at specified position
-///@args x,y,item,[type_of_data,value...]
 function InvDropCreate() {
-
+	///@desc Create drop item with specified data at specified position
+	///@args x,y,item,[type_of_data,value...]
+	
 	var _x = argument[0];
 	var _y = argument[1];
 	var _item = argument[2];
 
 	if !_item return false;
 
-	with (instance_create_layer(_x, _y, "items", oDropItem))
-	{
+	with (instance_create_layer(_x, _y, "items", oDropItem)) {
 		drop_data[items_flags.count] = 1;
 	
 		var i = 3;
@@ -667,59 +655,55 @@ function InvDropCreate() {
 	}
 }
 
-///@desc Add drop to specified inventory
-function InvAddDropToInv(_inventory, _data) {
-	//пока есть что переносить и есть свободное место либо такой же предмет
-	while(_data[@ items_flags.count]>0 && (InvFindItem(_inventory, ITEM.none) > -1 or
-	InvFindItem(_inventory, _data[items_flags.item]) > -1))
-	{
-		var find_slot = InvFindItem(_inventory, _data[items_flags.item]);
-		var slot_free = InvFindItem(_inventory, ITEM.none);
+function InvAddDropToInv(inventory, data) {
+	///@desc Add drop to specified inventory
+	
+	//while there is something to transfer and there is free space or the same item
+	while(data[@ items_flags.count] > 0 && (InvFindItem(inventory, ITEM.none) > -1 ||
+	InvFindItem(inventory, data[items_flags.item]) > -1)) {
+		var find_slot = InvFindItem(inventory, data[items_flags.item]);
+		var slot_free = InvFindItem(inventory, ITEM.none);
 	
 		//if find same item
 		if find_slot > -1 {
-			while (_inventory.inv_item[# find_slot,items_flags.count] < GetProp(_inventory.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && _data[@ items_flags.count] > 0)
-			{
-				_inventory.inv_item[# find_slot,items_flags.count]++
-				_data[@ items_flags.count]--
+			while (inventory.inv_item[# find_slot,items_flags.count] < GetProp(inventory.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && data[@ items_flags.count] > 0) {
+				inventory.inv_item[# find_slot,items_flags.count]++
+				data[@ items_flags.count]--
 			}
-			find_slot = InvFindItem(_inventory, _data[items_flags.item]);
+			find_slot = InvFindItem(inventory, data[items_flags.item]);
 			//if all items moved
-			if _data[@ items_flags.count]==0 {
+			if data[@ items_flags.count]==0 {
 				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-					_data[@ i] = 0;
+					data[@ i] = 0;
 				}
-				InvRedraw(_inventory);
 				return true;
 			}
 		} else {
 			//if find free slot
 			if slot_free >= 0 {
 				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-					_inventory.inv_item[# slot_free, i] = _data[i];
-					_data[@ i] = 0;
+					inventory.inv_item[# slot_free, i] = data[i];
+					data[@ i] = 0;
 				}
-				InvRedraw(_inventory);
 				return true;
 			} else {
-				InvRedraw(_inventory);
 				return false;
 			}
 		}
 	}
+	InvRedraw(inventory);
 }
 
-///@desc Add item to specified inventory
-///@args inventory,item,[count]
 function InvAddItemToInv() {
+	///@desc Add item to specified inventory
+	///@args inventory,item,[count]
+	
 	var _inv = argument[0];
 	var _item = argument[1];
-	var _count = 1;
-
-	if argument_count > 2 _count = argument[2];
+	var _count = argument_count > 2 ? argument[2] : 1;
 
 	//while there is something to transfer and there is free space or the same item
-	while(_count > 0 && (InvFindItem(_inv, ITEM.none) >= 0 or InvFindItem(_inv, _item) >= 0)) {
+	while(_count > 0 && (InvFindItem(_inv, ITEM.none) >= 0 || InvFindItem(_inv, _item) >= 0)) {
 		var find_slot = InvFindItem(_inv, _item);
 		var slot_free = InvFindItem(_inv, ITEM.none);
 	
@@ -729,35 +713,32 @@ function InvAddItemToInv() {
 				_inv.inv_item[# find_slot,items_flags.count]++
 				_count--
 			}
-			InvRedraw(_inv);
 			find_slot = InvFindItem(_inv, _item);
 			//if all items moved
 			if _count == 0 {
-				InvRedraw(_inv);
 				return true;
 			}
 		} else {
 			//if find free slot
 			if slot_free >= 0 {
 				InvSetSlotExt(_inv,slot_free,items_flags.item,_item,items_flags.count,_count,items_flags.hp,GetProp(_item, ALL_PROPS.hp));
-				InvRedraw(_inv);
 				return true;
 			} else {
-				InvRedraw(_inv);
 				return false;
 			}
 		}
 	}
+	InvRedraw(_inv);
 	return false;
 }
 
-///@desc drop all items in inventory at the specified location
-function InvDropAll(_inventory, _x, _y) {
-	with(_inventory) {
+function InvDropAll(inventory, x, y) {
+	///@desc drop all items in inventory at the specified location
+	
+	with(inventory) {
 		for (var i = 0; i < inv_slots; ++i) {
-			var _item = InvGetSlot(i,items_flags.item);
-			if _item {
-				InvDropSlot(id, i, _x, _y);
+			if InvGetSlot(i,items_flags.item) {
+				InvDropSlot(id, i, x, y);
 			}
 		}
 	}
@@ -767,9 +748,10 @@ function InvDropAll(_inventory, _x, _y) {
 
 #region //===SYSTEM===//
 
-///@desc Add item property
-///@args item,[prop,value,...]
 function AddItemProperty() {
+	///@desc Add item property
+	///@args item,[prop,value,...]
+	
 	var item = argument[0];
 	var i = 1;
 	repeat((argument_count-1)/2) {
@@ -778,13 +760,15 @@ function AddItemProperty() {
 	}
 }
 
-///@desc Get specified property of item
-function GetProp(_item, _property) {
-	return global.item_props[_item][_property];
+function GetProp(item, property) {
+	///@desc Get specified property of item
+	
+	return global.item_props[item][property];
 }
 
-///@desc Returns the inventory that is above all
 function GetInvOnTop() {
+	///@desc Returns the inventory that is above all
+	
 	var top_inv = noone;
 	var top_depth = 0;
 
@@ -800,8 +784,9 @@ function GetInvOnTop() {
 	return top_inv;
 }
 
-///@desc Check mouse position on inventory
 function CheckMouseOnInv() {
+	///@desc Check mouse position on inventory
+	
 	var l_side = invPosX - inv_left_border;
 	var r_side = invPosX + inv_surf_w - inv_left_border; //inv_width*cellSize + inv_right_border;
 	var t_side = invPosY - inv_head_border - inv_top_border;
@@ -811,8 +796,9 @@ function CheckMouseOnInv() {
 	return (_mouse_x > l_side && _mouse_x < r_side) && (_mouse_y > t_side && _mouse_y < b_side);
 }
 
-///@desc Check mouse position on all opened inventories
 function CheckMouseOnEveryInvs() {
+	///@desc Check mouse position on all opened inventories
+	
 	with(oInventory) {
 		if InvGetState(id)
 		if CheckMouseOnInv()
@@ -822,21 +808,23 @@ function CheckMouseOnEveryInvs() {
 	return false;
 }
 
-///@desc Check if the mouse cursor is on any of the slots of any inventory
 function CheckMouseOnEverySlots() {
+	///@desc Check if the mouse cursor is on any of the slots of any inventory
+	
 	with(oInventory) {
 		if selected_slot>=0 return true;
 	}
 	return false;
 }
 
-///@desc Draw inventory
-///@args [inventory]
 function InvRedraw() {
-
-	var _inv = id;
-	if argument_count > 0 _inv = argument[0];
-
+	///@desc Draw inventory
+	///@args [inventory]
+	
+	var _inv = argument_count > 0 ? argument[0] : id;
+	
+	//Redraw only if inventory is open (memory optimization)
+	if InvGetState(_inv)
 	with(_inv) {
 		//Create surface if doesn't exist
 		if !surface_exists(inv_surf) inv_surf = surface_create(inv_surf_w, inv_surf_h);
@@ -975,22 +963,19 @@ function InvRedraw() {
 	}
 }
 
-///@desc Find specific item in specific inventory (return: slot id)
-///@args inventory,item,[armor_parameter]
 function InvFindItem() {
-
-	var armor_parameter = false;
-
-	if argument_count > 2
-	armor_parameter = argument[2];
+	///@desc Find specific item in specific inventory (return: slot id)
+	///@args inventory,item,[armor_parameter]
+	
+	var armor_parameter = argument_count > 2 ? argument[2] : false;
 
 	with(argument[0]) {
 		for (var i = 0; i < inv_slots; ++i) {
 		    if inv_item[# i, items_flags.item] == argument[1] &&
 				inv_item[# i, items_flags.count] < GetProp(inv_item[# i, items_flags.item], ALL_PROPS.maxstack) &&
 				!inv_item[# i, items_flags.blocked_to_place_slot] &&
-				(inv_item[# i, items_flags.armor_type] == GetProp(argument[1], ALL_PROPS.cloth_type) or
-				InvGetSlot(i, items_flags.armor_type) == -1 or inv_item[# i, items_flags.armor_type] == armor_parameter)
+				(inv_item[# i, items_flags.armor_type] == GetProp(argument[1], ALL_PROPS.cloth_type) ||
+				InvGetSlot(i, items_flags.armor_type) == -1 || inv_item[# i, items_flags.armor_type] == armor_parameter)
 				{
 					return i;
 				}
@@ -999,45 +984,49 @@ function InvFindItem() {
 	return -1;
 }
 
-///@desc Move item from slot to hand
-function InvSlotToHand(_slot) {
+function InvSlotToHand(slot) {
+	///@desc Move item from slot to hand
+	
 	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-		global.ItemInHand[i] = inv_item[# _slot, i];
+		global.ItemInHand[i] = inv_item[# slot, i];
 	}
 }
 
-///@desc Clear item in hand
 function InvHandClear() {
+	///@desc Clear item in hand
+	
 	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 		global.ItemInHand[i] = 0;
 	}
 }
 
-///@desc Move item in hand to slot
-function InvHandToSlot(_slot) {
+function InvHandToSlot(slot) {
+	///@desc Move item in hand to slot
+	
 	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-		inv_item[# _slot, i] = global.ItemInHand[i];
+		inv_item[# slot, i] = global.ItemInHand[i];
 	}
 }
 
-///@desc Move half from slot to hand
-function InvSlotHalfToHand(_slot) {
-	global.ItemInHand[items_flags.item] = inv_item[# _slot, items_flags.item];				//take item to hand from slot
-	global.ItemInHand[items_flags.count] = ceil(inv_item[# _slot, items_flags.count] / 2);	//take half of value
+function InvSlotHalfToHand(slot) {
+	///@desc Move half from slot to hand
+	
+	global.ItemInHand[items_flags.item] = inv_item[# slot, items_flags.item];				//take item to hand from slot
+	global.ItemInHand[items_flags.count] = ceil(inv_item[# slot, items_flags.count] / 2);	//take half of value
 
-	inv_item[# _slot, items_flags.count] = floor(inv_item[# _slot, items_flags.count] / 2); //divide and round the slot after division
+	inv_item[# slot, items_flags.count] = floor(inv_item[# slot, items_flags.count] / 2); //divide and round the slot after division
 
 	//clear slot if its quantity is zero
-	if inv_item[# _slot, items_flags.count] == 0
-	InvSlotClear(_slot);
+	if (inv_item[# slot, items_flags.count] == 0) InvSlotClear(slot);
 }
 
-///@desc Move one item from hand to slot
-function InvOneFromHandToSlot(_slot) {
+function InvOneFromHandToSlot(slot) {
+	///@desc Move one item from hand to slot
+	
 	//If slot is empty
-	if !inv_item[# _slot, items_flags.item] {
-		inv_item[# _slot, items_flags.item] = global.ItemInHand[items_flags.item];
-		inv_item[# _slot, items_flags.count]++;
+	if !inv_item[# slot, items_flags.item] {
+		inv_item[# slot, items_flags.item] = global.ItemInHand[items_flags.item];
+		inv_item[# slot, items_flags.count]++;
 		global.ItemInHand[items_flags.count]--;
 	
 		if global.ItemInHand[items_flags.count] < 1 InvHandClear();
@@ -1045,10 +1034,10 @@ function InvOneFromHandToSlot(_slot) {
 		return true;
 	} else {
 		//If slot have the same item like in hand and stack is not full
-		if inv_item[# _slot, items_flags.item] == global.ItemInHand[items_flags.item] 
-		&& inv_item[# _slot, items_flags.count] < invItemMaxStack {
+		if inv_item[# slot, items_flags.item] == global.ItemInHand[items_flags.item] 
+		&& inv_item[# slot, items_flags.count] < invItemMaxStack {
 			
-			inv_item[# _slot, items_flags.count]++;
+			inv_item[# slot, items_flags.count]++;
 			global.ItemInHand[items_flags.count]--;
 		
 			if global.ItemInHand[items_flags.count] < 1 InvHandClear();
@@ -1060,68 +1049,68 @@ function InvOneFromHandToSlot(_slot) {
 	}
 }
 
-///@desc Swap slot with hand
-function InvSwapSlotWithHand(_slot) {
-	//записываем данные ячейки в память
+function InvSwapSlotWithHand(slot) {
+	///@desc Swap slot with hand
+	
+	//Writing cell data to memory
 	var temp_inv_item = [0];
 	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-		temp_inv_item[i] = inv_item[# _slot, i];
+		temp_inv_item[i] = inv_item[# slot, i];
 	}
 
-	//записываем предмет в слот с руки
-	InvHandToSlot(_slot);
+	//Write the item into the slot from the hand
+	InvHandToSlot(slot);
 
-	//берем предмет в руку с памяти
+	//Take an item in hand from memory
 	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 		global.ItemInHand[i] = temp_inv_item[i];
 	}
 }
 
-///@desc Move item to specified inventory
-function InvMoveItemToInv(_inv, _slot) {
-	//while there is something to transfer and there is free space or the same item
-	while(inv_item[# _slot, items_flags.count]>0 && (InvFindItem(_inv, ITEM.none, GetProp(inv_item[# _slot, items_flags.item], ALL_PROPS.cloth_type)) > -1 or
-	InvFindItem(_inv, inv_item[# _slot, items_flags.item]) > -1)) {
+function InvMoveItemToInv(inventory, slot) {
+	///@desc Move item to specified inventory
+	
+	//While there is something to transfer and there is free space or the same item
+	while(inv_item[# slot, items_flags.count]>0 && (InvFindItem(inventory, ITEM.none, GetProp(inv_item[# slot, items_flags.item], ALL_PROPS.cloth_type)) > -1 or
+	InvFindItem(inventory, inv_item[# slot, items_flags.item]) > -1)) {
 		
-		var find_slot = InvFindItem(_inv, inv_item[# _slot, items_flags.item]);
-		var slot_free = InvFindItem(_inv, ITEM.none, GetProp(inv_item[# _slot, items_flags.item], ALL_PROPS.cloth_type));
+		var find_slot = InvFindItem(inventory, inv_item[# slot, items_flags.item]);
+		var slot_free = InvFindItem(inventory, ITEM.none, GetProp(inv_item[# slot, items_flags.item], ALL_PROPS.cloth_type));
 	
 		//if find same item
 		if find_slot > -1 {
-			while (_inv.inv_item[# find_slot,items_flags.count] < GetProp(_inv.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && inv_item[# _slot, items_flags.count] > 0) {
-				_inv.inv_item[# find_slot,items_flags.count]++
-				inv_item[# _slot, items_flags.count]--
+			while (inventory.inv_item[# find_slot,items_flags.count] < GetProp(inventory.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && inv_item[# slot, items_flags.count] > 0) {
+				inventory.inv_item[# find_slot,items_flags.count]++
+				inv_item[# slot, items_flags.count]--
 			}
-			InvRedraw(_inv);
-			find_slot = InvFindItem(_inv, inv_item[# _slot, items_flags.item]);
+			find_slot = InvFindItem(inventory, inv_item[# slot, items_flags.item]);
 			//if all items moved
-			if inv_item[# _slot, items_flags.count]==0 {
+			if inv_item[# slot, items_flags.count]==0 {
 				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-					inv_item[# _slot, i] = 0;
+					inv_item[# slot, i] = 0;
 				}
-				InvRedraw(_inv);
 				return true;
 			}
 		} else {
 			//if find free slot
 			if slot_free >= 0 {
 				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
-					_inv.inv_item[# slot_free, i] = inv_item[# _slot, i];
-					inv_item[# _slot, i] = 0;
+					inventory.inv_item[# slot_free, i] = inv_item[# slot, i];
+					inv_item[# slot, i] = 0;
 				}
-				InvRedraw(_inv);
 				return true;
 			} else {
-				InvRedraw(_inv);
 				return false;
 			}
 		}
 	}
+	InvRedraw(inventory);
 	return false;
 }
 
-///@desc Recalculate inventory surface size
 function InvRecalculateSurfaceSize() {
+	///@desc Recalculate inventory surface size
+	
 	surface_free(inv_surf);
 	inv_surf = -1;
 
@@ -1134,34 +1123,34 @@ function InvRecalculateSurfaceSize() {
 
 #region //===GETTERS===//
 
-///@desc return show/open state of inventory
-function InvGetState(_inventory) {
-	return _inventory.inv_states;
+function InvGetState(inventory) {
+	///@desc return show/open state of inventory
+	return inventory.inv_states;
 }
 
-///@desc return name of inventory
-function InvGetName(_inventory) {
-	return _inventory.inv_name;
+function InvGetName(inventory) {
+	///@desc return name of inventory
+	return inventory.inv_name;
 }
 
-///@desc return slot data
-function InvGetSlot(_slot, _type_of_data) {
-	return inv_item[# _slot, _type_of_data];
+function InvGetSlot(slot, type_of_data) {
+	///@desc return slot data
+	return inv_item[# slot, type_of_data];
 }
 
-///@desc return slot data from the specified inventory
-function InvGetSlotExt(_inventory, _slot, _type_of_data) {
-	return _inventory.inv_item[# _slot, _type_of_data];
+function InvGetSlotExt(inventory, slot, type_of_data) {
+	///@desc return slot data from the specified inventory
+	return inventory.inv_item[# slot, type_of_data];
 }
 
-///@desc return slot data from hand
-function InvGetHandSlot(_type_of_data) {
-	return global.ItemInHand[_type_of_data];
+function InvGetHandSlot(type_of_data) {
+	///@desc return slot data from hand
+	return global.ItemInHand[type_of_data];
 }
 
-///@desc return drop data
-function InvGetDropData(_drop_obj, _type_of_data) {
-	return _drop_obj.drop_data[_type_of_data];
+function InvGetDropData(_drop_obj, type_of_data) {
+	///@desc return drop data
+	return _drop_obj.drop_data[type_of_data];
 }
 
 #endregion
@@ -1177,8 +1166,9 @@ function InvSetName(inventory, name) {
 	inventory.inv_name = name;
 }
 
-///@desc Set sprite to all slots in specified inventory (Sprite should be square!)
 function InvSetMainSlotSprite(inventory, sprite) {
+	///@desc Set sprite to all slots in specified inventory (Sprite should be square!)
+	
 	with(inventory) {
 		inv_slot_spr = sprite;
 	
@@ -1192,8 +1182,9 @@ function InvSetMainSlotSprite(inventory, sprite) {
 	}
 }
 
-///@desc Set background sprite for specified inventory
 function InvSetBackSprite(inventory, sprite) {
+	///@desc Set background sprite for specified inventory
+	
 	with(inventory) {
 		inv_back_spr = sprite;
 
@@ -1210,13 +1201,14 @@ function InvSetBackSpriteNineSlice(inventory, sprite, stretched) {
 	inventory.inv_nine_slice_stretched = stretched;
 }
 
-///@desc Set cursor sprite for specified inventory
 function InvSetCursorSprite(inventory, sprite) {
+	///@desc Set cursor sprite for specified inventory
+	
 	inventory.inv_cursor_sprite = sprite;
 }
 
-///@desc Set inventory colors
 function InvSetColors(inventory, back_color, top_color, border_color, slot_color) {
+	///@desc Set inventory colors
 	
 	inventory.inv_back_color = back_color;
 	inventory.inv_top_color = top_color;
@@ -1226,15 +1218,16 @@ function InvSetColors(inventory, back_color, top_color, border_color, slot_color
 	InvRedraw(inventory);
 }
 
-///@desc set inventory position on the screen
 function InvSetPosition(inventory, x, y) {
+	///@desc set inventory position on the screen
+	
 	inventory.invPosX = x;
 	inventory.invPosY = y;
 }
 
-///@args inventory,slot,item,[count,hp,enchant]
 function InvSetSlotItem() {
-
+	///@args inventory,slot,item,[count,hp,enchant]
+	
 	var _inventory = argument[0];
 	var _slot = argument[1];
 	var _item = argument[2];
@@ -1252,8 +1245,9 @@ function InvSetSlotItem() {
 	if InvGetState(_inventory) InvRedraw(_inventory);
 }
 
-///@desc set position for slot
 function InvSetSlotPos(inventory, slot_number, x_position, y_position) {
+	///@desc set position for slot
+	
 	with(inventory) {
 		inv_item[# slot_number, items_flags.slot_direct_x] = x_position;
 		inv_item[# slot_number, items_flags.slot_direct_y] = y_position;
@@ -1264,30 +1258,35 @@ function InvSetSlotBlockToPlace(inventory, slot) {
 	inventory.inv_item[# slot, items_flags.blocked_to_place_slot] = true;
 }
 
-///@desc Set sprite to specified slot in specified inventory (Sprite should be square! And the same size like main slot sprite!)
 function InvSetSlotSprite(inventory, slot, sprite) {
+	///@desc Set sprite to specified slot in specified inventory (Sprite should be square! And the same size like main slot sprite!)
+	
 	inventory.inv_item[# slot, items_flags.slot_sprite] = sprite;
 }
 
-///@desc Set special sprite (like silhouette of chestplate)
 function InvSetSlotSpecialSprite(inventory, slot, image_number) {
+	///@desc Set special sprite (like silhouette of chestplate)
+	
 	inventory.inv_item[# slot, items_flags.special_sprite] = image_number;
 }
 
-///@desc Set slot access only for armor
 function InvSetSlotArmorOnlyType(inventory, slot, armor_type) {
+	///@desc Set slot access only for armor
+	
 	inventory.inv_item[# slot, items_flags.armor_type] = armor_type;
 }
 
-///@desc Set selected slot to progressbar
 function InvSetSlotBar(inventory, slot) {
+	///@desc Set selected slot to progressbar
+	
 	inventory.inv_item[# slot, items_flags.slot_is_bar] = true;
 	InvSetSlotBlockToPlace(inventory, slot);
 }
 
-///@desc Set various slot data
-///@args inventory,slot,[type_of_data,value,...]
 function InvSetSlotExt() {
+	///@desc Set various slot data
+	///@args inventory,slot,[type_of_data,value,...]
+	
 	var _inv = argument[0];
 	var _slot = argument[1];
 	var i = 2;
@@ -1297,8 +1296,9 @@ function InvSetSlotExt() {
 	}
 }
 
-///@desc Set borders size of specified inventory
 function InvSetBordersSize(inventory, left, right, head, top, bottom) {
+	///@desc Set borders size of specified inventory
+	
 	with(inventory) {
 		//set inv borders
 		inv_left_border = left;
@@ -1316,19 +1316,22 @@ function InvSetBordersSize(inventory, left, right, head, top, bottom) {
 	}
 }
 
-///@desc show name of specified inventory or not
 function InvShowName(inventory, show) {
+	///@desc show name of specified inventory or not
+	
 	inventory.inv_show_name = show;
 }
 
-///@desc set open and close sounds of specified inventory
 function InvSetSounds(inventory, open_sound, close_sound) {
+	///@desc set open and close sounds of specified inventory
+	
 	inventory.inv_sound_open = open_sound;
 	inventory.inv_sound_close = close_sound;
 }
 
-///@desc set indent between cells of specified inventory
 function InvSetIndentOfCell(inventory, indent) {
+	///@desc set indent between cells of specified inventory
+	
 	with(inventory) {
 		inv_cell_indent = indent;
 		InvRecalculateSurfaceSize();

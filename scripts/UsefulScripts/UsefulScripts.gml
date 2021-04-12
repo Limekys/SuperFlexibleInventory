@@ -65,12 +65,8 @@ function draw_text_outline(_x, _y, _string, _outwidth, _outcolor, _outfidelity) 
 	draw_text(_x,_y,_string);
 }
 
-function DeltaTime() {
-	return delta_time / 1000000 * 60;
-}
-
-///@desc DrawHealthbar(x,y,sprite,hp,maxhp)
 function DrawHealthbar(x, y, sprite, hp, maxhp) {
+	///@desc DrawHealthbar(x,y,sprite,hp,maxhp)
 	var _sprite_width = sprite_get_width(sprite);
 	var _sprite_height = sprite_get_height(sprite);
 	draw_sprite(sprite, 0, x, y);
