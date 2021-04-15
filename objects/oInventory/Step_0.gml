@@ -11,10 +11,10 @@ switch(inv_states) {
 			image_xscale = ReachTween(image_xscale, 0.9, 3);
 			image_yscale = ReachTween(image_yscale, 0.9, 3);
 		}
-		if image_alpha == 0 && inv_show InvToggle(id,false);
+		if image_alpha == 0 && inv_shown InvToggle(id,false);
 	break;
 	case true: //Open
-		if !inv_show InvToggle(id,true);
+		if !inv_shown InvToggle(id,true);
 		if image_alpha < 1 {
 			image_alpha = ReachTween(image_alpha, 1, 3);
 			image_xscale = ReachTween(image_xscale, 1, 3);
@@ -59,11 +59,10 @@ repeat(inv_slots) {
 }
 
 //Redraw Inventory if mouse moved to another slot
-if last_selected_slot != selected_slot
-{
-	InvRedraw();
-	last_selected_slot = selected_slot;
-}
+//if last_selected_slot != selected_slot {
+//	InvRedraw();
+//	last_selected_slot = selected_slot;
+//}
 
 #endregion
 
@@ -240,8 +239,8 @@ if !global.InvDragAndDrop exit;
 
 if (mouse_check_button(mb_left)) && isdrag && inv_selected {
 	//Drag and drop and clamp
-	invPosX = clamp(m_x-offsetx, inv_left_border, global.gui_w - (inv_surf_w - inv_left_border));
-	invPosY = clamp(m_y-offsety, inv_head_border + inv_top_border, global.gui_h - (inv_surf_h - inv_head_border - inv_top_border));
+	invPosX = clamp(m_x-offsetx, inv_left_border, GUI_WIDTH - (inv_surf_w - inv_left_border));
+	invPosY = clamp(m_y-offsety, inv_head_border + inv_top_border, GUI_HEIGHT - (inv_surf_h - inv_head_border - inv_top_border));
 }
 
 if (mouse_check_button_released(mb_left)) {

@@ -44,10 +44,12 @@ if global.ItemInHand[items_flags.item] {
 
 //DEBUG
 if global.InvDrawDebug {
-	draw_set_color(c_white);
-	draw_set_font(global.InvMainFont);
-	draw_text(16, room_height*0.5, string(global.ItemInHand[items_flags.item]));
-	draw_text(16, room_height*0.5+16, string(global.ItemInHand[items_flags.count]));
-	draw_text(16, room_height*0.5+16*2, string(global.ItemInHand[items_flags.hp]));
-	draw_text(16, room_height*0.5+16*3, string(global.ItemInHand[items_flags.enchant]));
+	
+	DrawSetText(c_white, global.InvDebugFont, fa_left, fa_middle, 1);
+	
+	draw_text(4, display_get_gui_height() div 2, 
+	"Grab item: " + string(global.ItemInHand[items_flags.item]) + @"
+	Count: " + string(global.ItemInHand[items_flags.count]) + @"
+	Hp: " + string(global.ItemInHand[items_flags.hp]) + @"
+	Enchanted: " + string(global.ItemInHand[items_flags.enchant]));
 }

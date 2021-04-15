@@ -1,348 +1,3 @@
-function SuperFlexibleInventoryInit() {
-	
-	#region --- SETTINGS --- (You can change it like you want!)
-	
-	//Resolution
-	//global.disp_w = display_get_width();
-	//global.disp_h = display_get_height();
-	global.gui_w = display_get_gui_width();
-	global.gui_h = display_get_gui_height();
-	
-	// -- SPRITES --
-	
-	//Main sprite of all items
-	global.InvItemsSprite = sItems;		
-	
-	//Main slot sprite of all inventories 
-	//(if set "noone" and a rectangle with the specified color will be drawn
-	//instead of the sprite with default size slot)
-	global.InvSlotSprite = noone;							
-	
-	//Special slot sprite (like silhouette of chestplate/helmet/boots)
-	global.InvSpecialSlotSprite = sInvSpecialSlotSprite;
-	
-	//Main select slot cursor sprite (by default/you can set "noone" to drawing white rectangle)
-	global.InvMainCursorSpr = sInvCursor;
-	
-	// -- OTHER --
-	//Slot size (if slot sprite is not setted)
-	global.InvSlotSize = 64;
-	
-	//Scale of item sprite
-	global.InvItemScale = 1;
-	
-	//Show border of inventory if selected
-	global.InvShowSelected = true;
-	
-	//Main font
-	global.InvMainFont = fMainInventoryFont;
-	
-	//Draw debug
-	global.InvDrawDebug = false;
-	
-	//Move the inventory window with the mouse
-	global.InvDragAndDrop = true;
-	
-	//Sounds
-	global.InvClickSounds = true; //Play sounds or not
-	global.InvSndClick = sndInvClick; //Sound when you pick up item from slot
-	global.InvSndUnClick = sndInvUnClick; //Sound when you drop item to slot
-	global.InvSndOpen = noone; //Main sound for all inventories when opening inventory
-	global.InvSndClose = noone; //Main sound for all inventories when closing inventory
-	
-	#endregion// -------------------
-	
-	#region --- DON'T TOUCH ---
-	
-	//Main inventory id
-	global.InvMainID = -1;
-	//Last active inventory id
-	global.InvLastSelectedID = -1;
-	//Hand data (item in hand, when you picked up it with mouse)
-	global.ItemInHand = array_create(items_flags.inv_specs_height, 0);
-	
-	#endregion // -------------------
-	
-	#region init macros
-	
-	//Inventory slots enums
-	enum items_flags {
-		slot_direct_x,
-		slot_direct_y,
-		blocked_to_place_slot,
-		slot_is_bar,
-		slot_sprite,
-		special_sprite,
-		armor_type,
-	
-		item,
-		count,
-		hp,
-		enchant,
-	
-		inv_specs_height
-	}
-
-	//All game items
-	enum ITEM {
-		none						,
-		dirt						,
-		sand						,
-		coal_ore					,
-		iron_ore					,
-		gold_ore					,
-		diamond_ore					,
-		emerald_ore					,
-		iron_ingot					,
-		gold_ingot					,
-		diamond						,
-		emerald						,
-		pork						,
-		roast_pork					,
-		iron_sword					,
-		iron_pickaxe				,
-		iron_shovel					,
-		iron_axe					,
-		wood_sword					,
-		wood_pickaxe				,
-		wood_shovel					,
-		wood_axe					,
-		iron_helmet					,
-		iron_chestplate				,
-		iron_leggings				,
-		iron_boots					,
-		pumpkin_cutted				,
-		apple						,
-		cookie						,
-		cake						,
-		cake_chocolate				,
-		coal						,
-		glass_block					,
-		item_number					
-	}
-	
-	#endregion
-	
-	#region init language
-	
-	global.language = 0;
-	global.TEXT[0][0] = 0;
-	global.ITEM_TEXT[0][0] = 0;
-
-	enum GAME_LANGUAGE {
-		en,
-		ru
-	}
-
-	switch (os_get_language()) {
-		case "en": global.language = GAME_LANGUAGE.en; break;
-		case "ru": global.language = GAME_LANGUAGE.ru; break;
-	}
-
-	//ENGLISH
-	global.TEXT[GAME_LANGUAGE.en][0] = "damage: ";
-
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.none] = "-uknown-";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.dirt] = "dirt";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.sand] = "sand";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.coal_ore] = "coal ore";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_ore] = "iron ore";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.gold_ore] = "gold ore";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.diamond_ore] = "diamond ore";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.emerald_ore] = "emerald ore";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_ingot] = "iron ingot";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.gold_ingot] = "gold ingot";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.diamond] = "diamond";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.emerald] = "emerald";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.pork] = "pork";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.roast_pork] = "roast pork";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_sword] = "iron sword";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_pickaxe] = "iron pickaxe";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_shovel] = "iron shovel";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_axe] = "iron axe";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.wood_sword] = "wood sword";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.wood_pickaxe] = "wood pickaxe";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.wood_shovel] = "wood shovel";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.wood_axe] = "wood axe";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_helmet] = "iron helmet";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_chestplate] = "iron chestplate";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_leggings] = "iron leggings";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.iron_boots] = "iron boots";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.pumpkin_cutted] = "cutted pumpkin";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.apple] = "apple";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.cookie] = "cookie";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.cake] = "cake :3";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.cake_chocolate] = "cake chocolate :3";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.coal] = "coal";
-	global.ITEM_TEXT[GAME_LANGUAGE.en][ITEM.glass_block] = "glass block";
-
-	//РУССКИЙ
-	global.TEXT[GAME_LANGUAGE.ru][0] = "урон: ";
-
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.none] = "-неизвестно-";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.dirt] = "земля";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.sand] = "песок";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.coal_ore] = "угольная руда";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_ore] = "железная руда";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.gold_ore] = "золотая руда";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.diamond_ore] = "алмазная руда";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.emerald_ore] = "изумрудная руда";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_ingot] = "железный слиток";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.gold_ingot] = "золотой слиток";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.diamond] = "алмаз";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.emerald] = "изумруд";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.pork] = "свинина";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.roast_pork] = "жареная свинина";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_sword] = "железный меч";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_pickaxe] = "железная кирка";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_shovel] = "железная лопата";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_axe] = "железный топор";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.wood_sword] = "деревянный меч";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.wood_pickaxe] = "деревянная кирка";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.wood_shovel] = "деревянная лопата";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.wood_axe] = "деревянный топор";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_helmet] = "железный шлем";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_chestplate] = "железная нагрудник";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_leggings] = "железные леггинсы";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.iron_boots] = "железные сапоги";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.pumpkin_cutted] = "вырезанная тыква";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.apple] = "яблоко";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.cookie] = "печенька";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.cake] = "тортик :3";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.cake_chocolate] = "шоколадный тортик :3";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.coal] = "уголь";
-	global.ITEM_TEXT[GAME_LANGUAGE.ru][ITEM.glass_block] = "стеклянный блок";
-	
-	#endregion
-	
-	#region items properties
-	
-	#region ENUMS
-
-	enum ALL_PROPS {
-		drop_item,
-		hp,
-		maxstack,
-		tool_type,
-		tool_strength,
-		type,
-		material,
-		cloth_type,
-		satiety,
-		fuel,
-		unbreakable,
-		props_length
-	}
-
-	enum TYPE {
-		block,
-		grass,
-		liquid,
-		furniture,
-		tool,
-		food,
-		others,
-		cloth,
-		loose
-	}
-
-	enum MATERIAL {
-		block,
-		glass,
-		smooth,
-		sand,
-		grass = 6,
-		stone = 7,
-		dirt = 8,
-		wood = 9
-	}
-
-	enum TOOL_TYPE {
-		sword = 6,
-		pickaxe = 7,
-		shovel = 8,
-		axe = 9
-	}
-
-	enum CLOTH_TYPE {
-		helmet,
-		chestplate,
-		leggings,
-		boots,
-		shield
-	}
-
-	#endregion
-
-	for (var i = 0; i <= sprite_get_number(global.InvItemsSprite); ++i) {
-		global.item_props[i][ALL_PROPS.drop_item]		= i; //drop image_index of sprite; 0 - no drop
-		global.item_props[i][ALL_PROPS.hp]				= 1000*1.75; //hp of item or block
-		global.item_props[i][ALL_PROPS.maxstack]		= 100; //max stack
-		global.item_props[i][ALL_PROPS.tool_type]		= TOOL_TYPE.pickaxe; //tool type (sword, pickaxe, shovel, axe)
-		global.item_props[i][ALL_PROPS.tool_strength]	= 5; //tool strength, equipment protection
-		global.item_props[i][ALL_PROPS.type]			= TYPE.block; //item/block type (block, grass, liquid, furniture, tool, food, others, equipment, loose)
-		global.item_props[i][ALL_PROPS.material]		= MATERIAL.stone; //(material/sounds for blocks) glass, smooth(cactus, wool, mushroom...), sand, grass/leaves, stone, dirt, wood
-		global.item_props[i][ALL_PROPS.cloth_type]		= -1; //equipment type (helmet, chestplate, leggings, boots)
-		global.item_props[i][ALL_PROPS.satiety]			= 5; //satiety of food
-		global.item_props[i][ALL_PROPS.fuel]			= 0; //amount of fuel (if 0 then not fuel)
-		global.item_props[i][ALL_PROPS.unbreakable]		= false; //unbreakable
-	}
-
-	// \/ \/ \/ HERE YOU CAN SET ALL PROPERTIES OF ITEMS \/ \/ \/
-
-	//ITEMS
-	AddItemProperty(ITEM.none,ALL_PROPS.unbreakable,true);
-	AddItemProperty(ITEM.dirt,ALL_PROPS.hp,500,ALL_PROPS.material,MATERIAL.dirt);
-	AddItemProperty(ITEM.sand,ALL_PROPS.hp,350,ALL_PROPS.type,TYPE.loose,ALL_PROPS.material,MATERIAL.dirt);
-	AddItemProperty(ITEM.coal_ore,ALL_PROPS.hp,1200);
-	AddItemProperty(ITEM.iron_ore,ALL_PROPS.hp,1700);
-	AddItemProperty(ITEM.gold_ore,ALL_PROPS.hp,2500);
-	AddItemProperty(ITEM.diamond_ore,ALL_PROPS.drop_item,ITEM.diamond,ALL_PROPS.hp,3000);
-	AddItemProperty(ITEM.emerald_ore,ALL_PROPS.drop_item,ITEM.emerald,ALL_PROPS.hp,2500);
-	AddItemProperty(ITEM.iron_ingot,ALL_PROPS.type,TYPE.others);
-	AddItemProperty(ITEM.gold_ingot,ALL_PROPS.type,TYPE.others);
-	AddItemProperty(ITEM.diamond,ALL_PROPS.type,TYPE.others);
-	AddItemProperty(ITEM.emerald,ALL_PROPS.type,TYPE.others);
-	AddItemProperty(ITEM.glass_block, ALL_PROPS.material, MATERIAL.glass, ALL_PROPS.hp, 50, ALL_PROPS.drop_item, ITEM.none);
-	AddItemProperty(ITEM.pumpkin_cutted,ALL_PROPS.hp,200,ALL_PROPS.material,MATERIAL.smooth);
-
-	//TOOLS
-	AddItemProperty(ITEM.wood_sword,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.sword,ALL_PROPS.hp,80,ALL_PROPS.tool_strength,8,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.wood_pickaxe,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.pickaxe,ALL_PROPS.hp,80,ALL_PROPS.tool_strength,8,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.wood_shovel,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.shovel,ALL_PROPS.hp,80,ALL_PROPS.tool_strength,8,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.wood_axe,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.axe,ALL_PROPS.hp,80,ALL_PROPS.tool_strength,8,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_sword,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.sword,ALL_PROPS.hp,340,ALL_PROPS.tool_strength,32,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_pickaxe,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.pickaxe,ALL_PROPS.hp,340,ALL_PROPS.tool_strength,32,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_shovel,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.shovel,ALL_PROPS.hp,340,ALL_PROPS.tool_strength,32,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_axe,ALL_PROPS.type,TYPE.tool,ALL_PROPS.tool_type,TOOL_TYPE.axe,ALL_PROPS.hp,340,ALL_PROPS.tool_strength,32,ALL_PROPS.maxstack,1);
-
-	//ARMOR
-	AddItemProperty(ITEM.iron_helmet,ALL_PROPS.type,TYPE.cloth,ALL_PROPS.cloth_type,CLOTH_TYPE.helmet,ALL_PROPS.hp,60,ALL_PROPS.tool_strength,6,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_chestplate,ALL_PROPS.type,TYPE.cloth,ALL_PROPS.cloth_type,CLOTH_TYPE.chestplate,ALL_PROPS.hp,60,ALL_PROPS.tool_strength,6,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_leggings,ALL_PROPS.type,TYPE.cloth,ALL_PROPS.cloth_type,CLOTH_TYPE.leggings,ALL_PROPS.hp,60,ALL_PROPS.tool_strength,6,ALL_PROPS.maxstack,1);
-	AddItemProperty(ITEM.iron_boots,ALL_PROPS.type,TYPE.cloth,ALL_PROPS.cloth_type,CLOTH_TYPE.boots,ALL_PROPS.hp,60,ALL_PROPS.tool_strength,6,ALL_PROPS.maxstack,1);
-
-	//FOOD
-	AddItemProperty(ITEM.pork,ALL_PROPS.type,TYPE.food,ALL_PROPS.satiety,10);
-	AddItemProperty(ITEM.roast_pork,ALL_PROPS.type,TYPE.food,ALL_PROPS.satiety,25);
-	AddItemProperty(ITEM.apple,ALL_PROPS.type,TYPE.food,ALL_PROPS.satiety,5);
-	AddItemProperty(ITEM.cookie,ALL_PROPS.type,TYPE.food,ALL_PROPS.satiety,2);
-	AddItemProperty(ITEM.cake,ALL_PROPS.type,TYPE.food,ALL_PROPS.satiety,30,ALL_PROPS.maxstack,1);
-
-	//FUEL
-	for (var i = 0; i <= sprite_get_number(global.InvItemsSprite); ++i) { //check all items
-		if GetProp(i,ALL_PROPS.material) == MATERIAL.wood //if wood item
-		global.item_props[i][ALL_PROPS.fuel] = 100; //set fuel to default 100
-	}
-	AddItemProperty(ITEM.wood_sword,ALL_PROPS.fuel,50);
-	AddItemProperty(ITEM.wood_pickaxe,ALL_PROPS.fuel,50);
-	AddItemProperty(ITEM.wood_shovel,ALL_PROPS.fuel,50);
-	AddItemProperty(ITEM.wood_axe,ALL_PROPS.fuel,50);
-	AddItemProperty(ITEM.coal,ALL_PROPS.fuel,500);
-
-	#endregion
-}
-
 #region //===MAIN===//
 
 function InvCreate() {
@@ -351,14 +6,14 @@ function InvCreate() {
 	
 	if !layer_exists("Inventories") layer_create(-100, "Inventories");
 	if !layer_exists("items") layer_create(0, "items");
-	if !instance_exists(oInvControl) instance_create_layer(0,0,"Inventories",oInvControl);
+	if !instance_exists(oInvControl) instance_create_layer(0, 0, "Inventories", oInvControl);
 
-	with(instance_create_layer(0,0,"Inventories",oInventory)) {
+	with(instance_create_layer(0, 0, "Inventories", oInventory)) {
 		//Main parameters
-		inv_item = -1; //main data structure with items (ds_grid)
-		inv_show = false;
-		inv_states = false;
-		inv_selected = false;
+		inv_item = -1;									//main data structure with items (ds_grid)
+		inv_shown = false;								//inventory shown or not
+		inv_states = false;								//inventory state to open or close with animation
+		inv_selected = false;							//inventory is selected or not
 		inv_back_spr = noone;							//background sprite
 		inv_back_spr_nine_slice = noone;				//nine slice background sprite
 		inv_slot_spr = global.InvSlotSprite;			//slot sprite
@@ -438,8 +93,8 @@ function InvCreate() {
 		}
 	
 		//Set position (center of the screen for default)
-		invPosX = global.gui_w div 2 - inv_surf_w div 2; //X position of inventory
-		invPosY = global.gui_h div 2 - inv_surf_h div 2; //Y position of inventory
+		invPosX = GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
+		invPosY = GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
 	
 		InvRedraw();
 	
@@ -451,17 +106,13 @@ function InvCreate() {
 }
 
 function InvDestroy(inventory) {
-	///@desc Destroy previously created inventory
-	
+	///@desc Destroy inventory
 	if instance_exists(inventory) {
-	
-		if ds_exists(inventory.inv_item, ds_type_grid)
-		ds_grid_destroy(inventory.inv_item);
-	
-		if surface_exists(inventory.inv_surf)
-		surface_free(inventory.inv_surf);
-	
-		instance_destroy(inventory);
+		with(inventory) {
+			if ds_exists(inv_item, ds_type_grid) ds_grid_destroy(inv_item);
+			if surface_exists(inv_surf) surface_free(inv_surf);
+			instance_destroy();
+		}
 	}
 }
 
@@ -471,9 +122,9 @@ function InvToggle() {
 	
 	with(argument[0]) {
 		
-		inv_show = argument_count > 1 ? argument[1] : !inv_show;
+		inv_shown = argument_count > 1 ? argument[1] : !inv_shown;
 		
-		if !inv_show {
+		if !inv_shown {
 			//free memory on close
 			if surface_exists(inv_surf) surface_free(inv_surf);
 		}
@@ -501,13 +152,11 @@ function InvToggleAnim() {
 		
 			//Open sound
 			if inv_sound_open != noone audio_play_sound(inv_sound_open, 1, false);
-			else
-			if global.InvSndOpen != noone audio_play_sound(global.InvSndOpen, 1, false);
+			else if global.InvSndOpen != noone audio_play_sound(global.InvSndOpen, 1, false);
 		} else {
 			//Close sound
 			if inv_sound_close != noone audio_play_sound(inv_sound_close, 1, false);
-			else
-			if global.InvSndClose != noone audio_play_sound(global.InvSndClose, 1, false);
+			else if global.InvSndClose != noone audio_play_sound(global.InvSndClose, 1, false);
 		}
 	}
 }
@@ -796,6 +445,11 @@ function CheckMouseOnInv() {
 	return (_mouse_x > l_side && _mouse_x < r_side) && (_mouse_y > t_side && _mouse_y < b_side);
 }
 
+function CheckMouseOnInvSlots() {
+	///@desc Check if the mouse cursor is on any of the slots of this inventory
+	return selected_slot >= 0;
+}
+
 function CheckMouseOnEveryInvs() {
 	///@desc Check mouse position on all opened inventories
 	
@@ -808,7 +462,7 @@ function CheckMouseOnEveryInvs() {
 	return false;
 }
 
-function CheckMouseOnEverySlots() {
+function CheckMouseOnEveryInvsSlots() {
 	///@desc Check if the mouse cursor is on any of the slots of any inventory
 	
 	with(oInventory) {
@@ -910,18 +564,6 @@ function InvRedraw() {
 					if !DSinv[# ii, items_flags.item]
 					if global.InvSpecialSlotSprite != noone
 					draw_sprite_ext(global.InvSpecialSlotSprite, _special_sprite, slot_pos_x + cellSize div 2 + special_offset, slot_pos_y + cellSize div 2 + special_offset, 1,1,0,c_black,0.25);
-				}
-			
-				//Show cursor sprite or simple selected slot
-				if selected_slot == ii {
-					if inv_cursor_sprite != noone {
-						draw_sprite(inv_cursor_sprite, 0, slot_pos_x, slot_pos_y);
-					} else {
-						draw_set_color(c_white);
-						draw_set_alpha(0.5);
-						draw_rectangle(slot_pos_x, slot_pos_y, slot_pos_x + cellSize-1, slot_pos_y + cellSize-1, false);
-						draw_set_alpha(1);
-					}
 				}
 			}
 	

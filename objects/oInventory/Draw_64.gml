@@ -1,14 +1,35 @@
-///@desc draw inventory
-if !inv_show exit;
+///@desc Вraw inventory
+if !inv_shown exit;
 
 //Background, slots...
 DrawSetText(c_white, global.InvMainFont, fa_left, fa_bottom, image_alpha);
-if surface_exists(inv_surf)
-draw_surface_ext(inv_surf, invPosX - inv_left_border + (inv_surf_w*(1-image_xscale))/2,
-							invPosY - inv_top_border - inv_head_border + (inv_surf_h*(1-image_yscale))/2,
-							image_xscale, image_yscale, 0, c_white, image_alpha);
-else
-InvRedraw();
+if surface_exists(inv_surf) {
+	draw_surface_ext(inv_surf, invPosX - inv_left_border + (inv_surf_w*(1-image_xscale))/2,
+								invPosY - inv_top_border - inv_head_border + (inv_surf_h*(1-image_yscale))/2,
+								image_xscale, image_yscale, 0, c_white, image_alpha);
+	//Draw cursor sprite
+	if CheckMouseOnInvSlots() {
+		//Calculate slot position
+		var DSinv = inv_item;
+		var ix = DSinv[# selected_slot, items_flags.slot_direct_x];
+		var iy = DSinv[# selected_slot, items_flags.slot_direct_y];
+		var slot_pos_x = invPosX + ix*(cellSize + inv_cell_indent);
+		var slot_pos_y = invPosY + iy*(cellSize + inv_cell_indent);
+		//Draw cursor sprite
+		if inv_cursor_sprite != noone {
+			//Special sprite
+			draw_sprite(inv_cursor_sprite, 0, slot_pos_x, slot_pos_y);
+		} else {
+			//Or default rectangle
+			draw_set_color(c_white);
+			draw_set_alpha(0.5);
+			draw_rectangle(slot_pos_x, slot_pos_y, slot_pos_x + cellSize-1, slot_pos_y + cellSize-1, false);
+			draw_set_alpha(1);
+		}
+	}
+} else {
+	InvRedraw();
+}
 
 //Draw slot-bars (healthbars)
 var DSinv = inv_item;
@@ -37,11 +58,14 @@ repeat (inv_slots) {
 
 // --- DEBUG ---
 if global.InvDrawDebug {
-	DrawSetText(c_white, global.InvMainFont, fa_right, fa_bottom, 1);
-	draw_text(invPosX - 16, invPosY - 16, selected_slot);
-	draw_text(invPosX - 16, invPosY, depth);
-	draw_text(invPosX - 16, invPosY + 16*1, inv_surf_w);
-	draw_text(invPosX - 16, invPosY + 16*2, inv_surf_h);
+	DrawSetText(c_white, global.InvDebugFont, fa_right, fa_bottom, 1);
+	
+	draw_text(invPosX - inv_left_border, invPosY, 
+	"Selected slot: " + string(selected_slot) + @"
+	Depth: " + string(depth) + @"
+	Width: " + string(inv_surf_w) + @"
+	Height: " + string(inv_surf_h));
+	
 	draw_set_color(c_red);
 	draw_circle(invPosX, invPosY, 3, false);
 }
