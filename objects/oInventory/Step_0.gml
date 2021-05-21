@@ -239,8 +239,8 @@ if !global.InvDragAndDrop exit;
 
 if (mouse_check_button(mb_left)) && isdrag && inv_selected {
 	//Drag and drop and clamp
-	invPosX = clamp(m_x-offsetx, inv_left_border, GUI_WIDTH - (inv_surf_w - inv_left_border));
-	invPosY = clamp(m_y-offsety, inv_head_border + inv_top_border, GUI_HEIGHT - (inv_surf_h - inv_head_border - inv_top_border));
+	invPosX = clamp(m_x-offsetx, inv_left_border, _SINV_GUI_WIDTH - (inv_surf_w - inv_left_border));
+	invPosY = clamp(m_y-offsety, inv_head_border + inv_top_border, _SINV_GUI_HEIGHT - (inv_surf_h - inv_head_border - inv_top_border));
 }
 
 if (mouse_check_button_released(mb_left)) {

@@ -71,8 +71,8 @@ enum items_flags {
 #region //================ SYSTEM ================// (DON'T TOUCH)
 
 //GUI width and height getters for better readability of the code
-#macro GUI_WIDTH display_get_gui_width()
-#macro GUI_HEIGHT display_get_gui_height()
+#macro _SINV_GUI_WIDTH display_get_gui_width()
+#macro _SINV_GUI_HEIGHT display_get_gui_height()
 
 //Main inventory id
 global.InvMainID = -1;

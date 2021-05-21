@@ -93,8 +93,8 @@ function InvCreate() {
 		}
 	
 		//Set position (center of the screen for default)
-		invPosX = GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
-		invPosY = GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
+		invPosX = _SINV_GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
+		invPosY = _SINV_GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
 	
 		InvRedraw();
 	
