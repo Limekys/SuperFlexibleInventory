@@ -1,78 +1,71 @@
 #region //===MAIN===//
 
-function InvCreate() {
+function InvCreate(width, height, slot_number = undefined) {
 	///@desc Create a new inventory
-	///@args width,height,[inv_slots]
 	
 	if !layer_exists("Inventories") layer_create(-100, "Inventories");
-	if !layer_exists("items") layer_create(0, "items");
+	if !layer_exists("layItems") layer_create(0, "layItems");
 	if !instance_exists(oInvControl) instance_create_layer(0, 0, "Inventories", oInvControl);
-
+	
 	with(instance_create_layer(0, 0, "Inventories", oInventory)) {
 		//Main parameters
-		inv_item = -1;									//main data structure with items (ds_grid)
-		inv_shown = false;								//inventory shown or not
-		inv_states = false;								//inventory state to open or close with animation
-		inv_selected = false;							//inventory is selected or not
-		inv_back_spr = noone;							//background sprite
-		inv_back_spr_nine_slice = noone;				//nine slice background sprite
-		inv_slot_spr = global.InvSlotSprite;			//slot sprite
-		inv_cursor_sprite = global.InvMainCursorSpr;	//slot cursor sprite
-		inv_name = "Inventory " + string(id);			//inventory name
-		inv_width = 9;									//width of inventory in slots
-		inv_height = 3;									//width of inventory in slots
-		inv_slots = inv_width*inv_height;				//number of slots
-		cellSize = inv_slot_spr ? sprite_get_width(inv_slot_spr) : global.InvSlotSize;
-		items_offset = -(sprite_get_width(global.InvItemsSprite)/2)+sprite_get_xoffset(global.InvItemsSprite);
-		special_offset = global.InvSpecialSlotSprite ? (-(sprite_get_width(global.InvSpecialSlotSprite)/2)+sprite_get_xoffset(global.InvSpecialSlotSprite)) : 16;
-		selected_slot = -1;
-		invItemMaxStack = 1;
-		inv_nine_slice_stretched = false;
-		inv_show_name = true;
-	
+		self.inv_item = -1;																	//main data structure with items (ds_grid)
+		self.inv_shown = false;																//inventory shown or not
+		self.inv_states = INV_STATE.close;													//inventory state to open or close with animation
+		self.inv_selected = false;															//inventory is selected or not
+		self.inv_back_spr = noone;															//background sprite
+		self.inv_back_spr_nine_slice = noone;												//nine slice background sprite
+		self.inv_slot_spr = global.InvSlotSprite;											//slot sprite
+		self.inv_cursor_sprite = global.InvMainCursorSpr;									//slot cursor sprite
+		self.inv_name = "Inventory " + string(irandom(1000));								//inventory name
+		self.inv_width = width;																//width of inventory in slots
+		self.inv_height = height;															//width of inventory in slots
+		self.inv_slots = slot_number != undefined ? slot_number : inv_width*inv_height;		//number of slots
+		self.cellSize = inv_slot_spr ? sprite_get_width(inv_slot_spr) : global.InvSlotSize;
+		self.items_offset = -(sprite_get_width(global.InvItemsSprite)/2)+sprite_get_xoffset(global.InvItemsSprite);
+		self.special_offset = global.InvSpecialSlotSprite ? (-(sprite_get_width(global.InvSpecialSlotSprite)/2)+sprite_get_xoffset(global.InvSpecialSlotSprite)) : 16;
+		self.selected_slot = -1;
+		self.invItemMaxStack = 1;
+		self.inv_show_name = true;
+		
 		//Sounds
-		inv_sound_open = noone;
-		inv_sound_close = noone;
-
+		self.inv_sound_open = noone;
+		self.inv_sound_close = noone;
+		
 		//Colors
-		inv_back_color = $333333;
-		inv_top_color = $222222;
-		inv_border_color = inv_top_color;
-		inv_slot_color = c_ltgray;
-
+		self.inv_back_color = $333333;
+		self.inv_top_color = $222222;
+		self.inv_border_color = inv_top_color;
+		self.inv_slot_color = c_ltgray;
+		
 		//Borders
-		inv_left_border = 4;
-		inv_right_border = 4;
-		inv_bottom_border = 4;
-		inv_top_border = 4;
-		inv_head_border = 32;
-		inv_cell_indent = 0; //indent between cells
-
+		self.inv_left_border = 12;
+		self.inv_right_border = 12;
+		self.inv_bottom_border = 12;
+		self.inv_top_border = 12;
+		self.inv_head_border = 32;
+		self.inv_cell_indent = 0; //indent between cells
+		
 		//Drag window
-		isdrag = false;
-		drag_x = mouse_x;
-		drag_y = mouse_y;
-		offsetx = 0;
-		offsety = 0;
-
+		self.isdrag = false;
+		self.drag_x = mouse_x;
+		self.drag_y = mouse_y;
+		self.offsetx = 0;
+		self.offsety = 0;
+		
 		//Surface
-		inv_surf = -1;
-		last_selected_slot = -1;
-	
-		//Setup settings
-		inv_width = argument[0];
-		inv_height = argument[1];
-		inv_slots = argument_count > 2 ? argument[2] : inv_width*inv_height;
-	
-		inv_item = ds_grid_create(inv_slots, items_flags.inv_specs_height);
-	
+		self.inv_surf = -1;
+		
+		//Cells of items
+		self.inv_item = ds_grid_create(inv_slots, items_flags.inv_specs_height);
+		
 		//Surface size
-		inv_surf_w = inv_width*(cellSize+inv_cell_indent) + inv_left_border + inv_right_border;
-		inv_surf_h = inv_height*(cellSize+inv_cell_indent) + inv_head_border + inv_top_border + inv_bottom_border;
+		self.inv_surf_w = inv_width*(cellSize+inv_cell_indent) + inv_left_border + inv_right_border;
+		self.inv_surf_h = inv_height*(cellSize+inv_cell_indent) + inv_head_border + inv_top_border + inv_bottom_border;
 		image_alpha = 0;
 		image_xscale = 0.9;
 		image_yscale = 0.9;
-	
+		
 		//Init default data
 		var ii = 0, ix = 0, iy = 0;
 		repeat (inv_slots) {
@@ -91,17 +84,17 @@ function InvCreate() {
 			ix = ii mod inv_width;
 			iy = ii div inv_width;
 		}
-	
+		
 		//Set position (center of the screen for default)
-		invPosX = _SINV_GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
-		invPosY = _SINV_GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
-	
+		self.invPosX = _SINV_GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
+		self.invPosY = _SINV_GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
+		
 		InvRedraw();
-	
+		
 		//Set main inv if it first
-		if global.InvMainID == -1 global.InvMainID = id;
-	
-		return id;
+		if (global.InvMainID == undefined) global.InvMainID = self;
+		
+		return self;
 	}
 }
 
@@ -116,13 +109,12 @@ function InvDestroy(inventory) {
 	}
 }
 
-function InvToggle() {
+function InvToggle(inventory, state = undefined) {
 	///@desc Open or close inventory
-	///@args inventory,[show/hide]
 	
-	with(argument[0]) {
+	with(inventory) {
 		
-		inv_shown = argument_count > 1 ? argument[1] : !inv_shown;
+		inv_shown = state == undefined ? !inv_shown : state;
 		
 		if !inv_shown {
 			//free memory on close
@@ -131,15 +123,20 @@ function InvToggle() {
 	}
 }
 
-function InvToggleAnim() {
+function InvToggleAnim(inventory, state = undefined) {
 	///@desc Open or close inventory
-	///@args inventory,[show/hide]
 	
-	with(argument[0]) {
+	with(inventory) {
 		
-		inv_states = argument_count > 1 ? argument[1] : !inv_states;
+		if (state == inv_states) return false;
 		
-		if inv_states {
+		if state == undefined {
+			inv_states = inv_states == INV_STATE.close ? INV_STATE.open : INV_STATE.close;
+		} else {
+			inv_states = state;
+		}
+		
+		if inv_states == INV_STATE.open {
 			with(oInventory) {
 				inv_selected = false;
 				depth = clamp(depth+1,-99,0);
@@ -147,16 +144,17 @@ function InvToggleAnim() {
 			}
 			depth = -99;
 			inv_selected = true;
-			if id!=global.InvMainID global.InvLastSelectedID = id;
+			if (self != global.InvMainID) global.InvLastSelectedID = self;
+			
 			InvRedraw();
 		
 			//Open sound
-			if inv_sound_open != noone audio_play_sound(inv_sound_open, 1, false);
-			else if global.InvSndOpen != noone audio_play_sound(global.InvSndOpen, 1, false);
+			if (inv_sound_open != noone) audio_play_sound(inv_sound_open, 1, false);
+			else if (global.InvSndOpen != noone) audio_play_sound(global.InvSndOpen, 1, false);
 		} else {
 			//Close sound
-			if inv_sound_close != noone audio_play_sound(inv_sound_close, 1, false);
-			else if global.InvSndClose != noone audio_play_sound(global.InvSndClose, 1, false);
+			if (inv_sound_close != noone) audio_play_sound(inv_sound_close, 1, false);
+			else if (global.InvSndClose != noone) audio_play_sound(global.InvSndClose, 1, false);
 		}
 	}
 }
@@ -238,9 +236,11 @@ function InvDropHand() {
 		}
 		
 		image_index = drop_data[items_flags.item];
+		picktimer = 3.0;
 		
-		return id;
+		return self;
 	}
+	return undefined;
 }
 
 function InvDropSlot() {
@@ -270,6 +270,7 @@ function InvDropSlot() {
 		}
 		
 		_drop.image_index = _drop.drop_data[items_flags.item];
+		_drop.picktimer = 3.0;
 		
 		return _drop;
 	}
@@ -285,7 +286,7 @@ function InvDropCreate() {
 
 	if !_item return false;
 
-	with (instance_create_layer(_x, _y, "items", oDropItem)) {
+	with (instance_create_layer(_x, _y, "layItems", oDropItem)) {
 		drop_data[items_flags.count] = 1;
 	
 		var i = 3;
@@ -299,8 +300,10 @@ function InvDropCreate() {
 	
 		drop_data[items_flags.item] = _item;
 		image_index = drop_data[items_flags.item];
-	
-		return id;
+		
+		picktimer = 1.0;
+		
+		return self;
 	}
 }
 
@@ -381,15 +384,23 @@ function InvAddItemToInv() {
 	return false;
 }
 
-function InvDropAll(inventory, x, y) {
+function InvDropAll(inventory, x, y, action_with_drop = undefined) {
 	///@desc drop all items in inventory at the specified location
 	
 	with(inventory) {
 		for (var i = 0; i < inv_slots; ++i) {
 			if InvGetSlot(i,items_flags.item) {
-				InvDropSlot(id, i, x, y);
+				var _drop = InvDropSlot(self, i, x, y);
+				if action_with_drop != undefined
+				method(_drop, action_with_drop)();
 			}
 		}
+	}
+}
+
+function InvCloseAll() {
+	with(oInventory) {
+		InvToggleAnim(self, INV_STATE.close);
 	}
 }
 
@@ -415,6 +426,12 @@ function GetProp(item, property) {
 	return global.item_props[item][property];
 }
 
+function InvRedraw(_inv = self) {
+	with(_inv) {
+		if surface_exists(inv_surf) surface_free(inv_surf);
+	}
+}
+
 function GetInvOnTop() {
 	///@desc Returns the inventory that is above all
 	
@@ -422,11 +439,11 @@ function GetInvOnTop() {
 	var top_depth = 0;
 
 	with(oInventory) {
-		if inv_states
+		if inv_states == INV_STATE.open
 		if CheckMouseOnInv()
 		if (depth < top_depth) {
 			top_depth = depth;
-			top_inv = id;
+			top_inv = self;
 		}
 	}
 	
@@ -454,7 +471,7 @@ function CheckMouseOnEveryInvs() {
 	///@desc Check mouse position on all opened inventories
 	
 	with(oInventory) {
-		if InvGetState(id)
+		if InvGetState(self) == INV_STATE.open
 		if CheckMouseOnInv()
 		return true;
 	}
@@ -469,140 +486,6 @@ function CheckMouseOnEveryInvsSlots() {
 		if selected_slot>=0 return true;
 	}
 	return false;
-}
-
-function InvRedraw() {
-	///@desc Draw inventory
-	///@args [inventory]
-	
-	var _inv = argument_count > 0 ? argument[0] : id;
-	
-	//Redraw only if inventory is open (memory optimization)
-	if InvGetState(_inv)
-	with(_inv) {
-		//Create surface if doesn't exist
-		if !surface_exists(inv_surf) inv_surf = surface_create(inv_surf_w, inv_surf_h);
-	
-		draw_set_alpha(1);
-		
-		surface_set_target(inv_surf);
-		draw_clear_alpha(c_black,0);
-		
-		//Background
-		if !inv_back_spr && !inv_back_spr_nine_slice {
-		//Back/Main
-		draw_set_color(inv_back_color);
-		draw_rectangle(0, 0, inv_left_border + inv_width*(cellSize+inv_cell_indent) + inv_right_border,
-							inv_head_border + inv_top_border + inv_height*(cellSize+inv_cell_indent) + inv_bottom_border,
-							false);
-		//Head
-		draw_set_color(inv_top_color);
-		draw_rectangle(0, 0, inv_left_border + inv_width*(cellSize+inv_cell_indent) + inv_right_border,
-							inv_head_border - 1,
-							false);
-		} else {
-			//Or Nine slice
-			if inv_back_spr_nine_slice {
-				var _img_w = sprite_get_width(inv_back_spr_nine_slice);
-				draw_nine_slice(inv_back_spr_nine_slice, 0, 0, inv_surf_w div _img_w*_img_w, inv_surf_h div _img_w*_img_w, inv_nine_slice_stretched);
-			} else
-			//Or Background sprite
-			draw_sprite(inv_back_spr,0,0,0);
-		}
-		
-		//Draw borders
-		if inv_selected && global.InvShowSelected {
-			//Selected inventory color
-			draw_set_color(c_white);
-			draw_rectangle(0, 0, inv_surf_w -1, inv_surf_h -1, true);
-		} else {
-			if !inv_back_spr && !inv_back_spr_nine_slice {
-				//Default color of inventory window
-				draw_set_color(inv_border_color);
-				draw_rectangle(0, 0, inv_surf_w -1, inv_surf_h -1, true);
-			}
-		}
-		
-		gpu_set_colorwriteenable(true,true,true,false);
-		
-		//SLOTS
-		var DSinv = inv_item;
-		var ii = 0, ix = 0, iy = 0;
-		repeat (inv_slots) {
-	
-			//Getting coordinates
-			ix = DSinv[# ii, items_flags.slot_direct_x];
-			iy = DSinv[# ii, items_flags.slot_direct_y];
-			var slot_pos_x = inv_left_border + ix*(cellSize + inv_cell_indent);
-			var slot_pos_y = inv_head_border + inv_top_border + iy*(cellSize+inv_cell_indent);
-	
-			//Draw slots
-			var slot_spr = inv_slot_spr;							//Set default/custom slot sprite for all slots
-			if (inv_item[# ii, items_flags.slot_sprite] != noone) 
-			slot_spr = inv_item[# ii, items_flags.slot_sprite];		//Set custom sprite for slot if this slot have custom sprite
-			//Draw slot if it's not progressbar
-			if !DSinv[# ii, items_flags.slot_is_bar] {
-			
-				//Draw slot
-				if slot_spr != noone {
-					if DSinv[# ii, items_flags.enchant] {
-						//If enchanted
-						draw_sprite_ext(slot_spr, 0, slot_pos_x, slot_pos_y, 1, 1, 0, c_yellow, 1);
-					} else {
-						//Simple slot
-						draw_sprite(slot_spr, 0, slot_pos_x, slot_pos_y);
-					}
-				} else {
-					//Draw colored rectangle if slot sprite is not setted
-					var _color = DSinv[# ii, items_flags.enchant] ? c_yellow : inv_slot_color; //yellow slot if enchanted
-					draw_rectangle_color(slot_pos_x, slot_pos_y, slot_pos_x + cellSize -1, slot_pos_y + cellSize -1, _color, _color, _color, _color, false);
-				}
-				
-				//Draw special sprite (like silhouette of chestplate)
-				var _special_sprite = DSinv[# ii, items_flags.special_sprite];
-				if _special_sprite >= 0 {
-					if !DSinv[# ii, items_flags.item]
-					if global.InvSpecialSlotSprite != noone
-					draw_sprite_ext(global.InvSpecialSlotSprite, _special_sprite, slot_pos_x + cellSize div 2 + special_offset, slot_pos_y + cellSize div 2 + special_offset, 1,1,0,c_black,0.25);
-				}
-			}
-	
-			//Draw items and info
-			if DSinv[# ii, items_flags.item] {
-				//Sprite of item
-				draw_sprite_ext(global.InvItemsSprite, DSinv[# ii, items_flags.item], slot_pos_x + cellSize div 2 + items_offset, slot_pos_y + cellSize div 2 + items_offset,
-								global.InvItemScale, global.InvItemScale, 0, c_white, 1);
-	
-				//Amount
-				DrawSetText(c_white, global.InvMainFont, fa_center, fa_middle, 1);
-				if DSinv[# ii, items_flags.count]>1
-				draw_text_outline(slot_pos_x + cellSize*0.75, slot_pos_y + cellSize*0.75, 
-									string(DSinv[# ii, items_flags.count]),
-									1, c_black, 8);
-			
-				//Strength
-				if GetProp(DSinv[# ii, items_flags.item], ALL_PROPS.type) == TYPE.tool
-				&& DSinv[# ii, items_flags.hp] < GetProp(DSinv[# ii, items_flags.item], ALL_PROPS.hp)
-				draw_healthbar(slot_pos_x + 3, slot_pos_y + cellSize-8,
-								slot_pos_x + cellSize - 4, slot_pos_y + cellSize-4, 
-								(DSinv[# ii, items_flags.hp] / GetProp(DSinv[# ii, items_flags.item], ALL_PROPS.hp))*100,
-								c_gray, c_red, c_green, 0, true, true);
-			}
-	
-			//inc
-			ii++;
-		}
-		
-		//Inventory name
-		if inv_show_name
-		if inv_name != "" {
-			DrawSetText(c_white, global.InvMainFont, fa_left, fa_top, 1);
-			draw_text_outline(inv_left_border, inv_head_border div 3, inv_name, 1, c_black, 8);
-		}
-	
-		gpu_set_colorwriteenable(true,true,true,true);
-		surface_reset_target();
-	}
 }
 
 function InvFindItem() {
@@ -731,6 +614,7 @@ function InvMoveItemToInv(inventory, slot) {
 				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
 					inv_item[# slot, i] = 0;
 				}
+				InvRedraw(inventory);
 				return true;
 			}
 		} else {
@@ -740,13 +624,13 @@ function InvMoveItemToInv(inventory, slot) {
 					inventory.inv_item[# slot_free, i] = inv_item[# slot, i];
 					inv_item[# slot, i] = 0;
 				}
+				InvRedraw(inventory);
 				return true;
 			} else {
 				return false;
 			}
 		}
 	}
-	InvRedraw(inventory);
 	return false;
 }
 
@@ -800,7 +684,7 @@ function InvGetDropData(_drop_obj, type_of_data) {
 #region //===SETTERS===//
 
 function InvSetMain(inventory) {
-	global.InvMainID = inventory.id;
+	global.InvMainID = inventory;
 	return global.InvMainID;
 }
 
@@ -818,7 +702,7 @@ function InvSetMainSlotSprite(inventory, sprite) {
 	
 		//recalculate inv surf size if background sprite was changed before
 		if inv_back_spr != noone
-		InvSetBackSprite(id,inv_back_spr);
+		InvSetBackSprite(self, inv_back_spr);
 	
 		surface_free(inv_surf);
 	}
@@ -838,9 +722,8 @@ function InvSetBackSprite(inventory, sprite) {
 	}
 }
 
-function InvSetBackSpriteNineSlice(inventory, sprite, stretched) {
+function InvSetBackSpriteNineSlice(inventory, sprite) {
 	inventory.inv_back_spr_nine_slice = sprite;
-	inventory.inv_nine_slice_stretched = stretched;
 }
 
 function InvSetCursorSprite(inventory, sprite) {
@@ -884,7 +767,7 @@ function InvSetSlotItem() {
 		inv_item[# _slot, items_flags.enchant] = _enchant;
 	}
 
-	if InvGetState(_inventory) InvRedraw(_inventory);
+	if (InvGetState(_inventory) == INV_STATE.open) InvRedraw(_inventory);
 }
 
 function InvSetSlotPos(inventory, slot_number, x_position, y_position) {
@@ -952,7 +835,7 @@ function InvSetBordersSize(inventory, left, right, head, top, bottom) {
 		InvRecalculateSurfaceSize();
 	
 		//recalculate inv surf size if background sprite was changed before
-		if (inv_back_spr != noone) InvSetBackSprite(id,inv_back_spr);
+		if (inv_back_spr != noone) InvSetBackSprite(self, inv_back_spr);
 	
 		surface_free(inv_surf);
 	}

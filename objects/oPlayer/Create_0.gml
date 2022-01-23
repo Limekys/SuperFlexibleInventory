@@ -26,7 +26,7 @@ repeat (inventory.inv_slots) {
 	ii++;
 }
 
-InvToggleAnim(inventory, true);
+InvToggleAnim(inventory, INV_STATE.open);
 
 #endregion
 
@@ -58,7 +58,8 @@ InvSetSlotArmorOnlyType(equipment, chestplate_slot, CLOTH_TYPE.chestplate);
 InvSetSlotArmorOnlyType(equipment, leggings_slot, CLOTH_TYPE.leggings);
 InvSetSlotArmorOnlyType(equipment, boots_slot, CLOTH_TYPE.boots);
 InvSetSlotArmorOnlyType(equipment, shield_slot, CLOTH_TYPE.shield);
-InvToggleAnim(equipment, true);
+
+InvToggleAnim(equipment, INV_STATE.open);
 
 #endregion
 

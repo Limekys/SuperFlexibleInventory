@@ -1,3 +1,5 @@
-Copyright (c) 2021 by Anatoly Veremyev aka Limekys. All rights reserved.
+Asset made by Anatoly Veremyev (Limekys).
 
-https://creativecommons.org/licenses/by-nd/4.0/
+I allow you to use this Asset in your games and change it like you want, 
+even in commercial plans with attribution, 
+but I forbid you to distribute the Asset by itself for free.

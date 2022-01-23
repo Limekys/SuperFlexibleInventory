@@ -1,4 +1,4 @@
-//should be changed in your game
+//Should be changed in your game
 	
 global.language = 0;
 global.TEXT[0][0] = 0;
@@ -12,6 +12,12 @@ enum GAME_LANGUAGE {
 switch (os_get_language()) {
 	case "en": global.language = GAME_LANGUAGE.en; break;
 	case "ru": global.language = GAME_LANGUAGE.ru; break;
+}
+
+//Init default names
+for (var i = 0; i < ITEM.item_number; ++i) {
+    global.ITEM_TEXT[GAME_LANGUAGE.en][i] = "item_" + string(i);
+    global.ITEM_TEXT[GAME_LANGUAGE.ru][i] = "предмет_" + string(i);
 }
 
 //ENGLISH

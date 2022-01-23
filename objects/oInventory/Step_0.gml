@@ -5,16 +5,16 @@ invItemMaxStack = 1;
 
 //Inventory states
 switch(inv_states) {
-	case false: //Close
+	case INV_STATE.close: //Close
 		if image_alpha > 0 {
 			image_alpha = ReachTween(image_alpha, 0, 3);
 			image_xscale = ReachTween(image_xscale, 0.9, 3);
 			image_yscale = ReachTween(image_yscale, 0.9, 3);
 		}
-		if image_alpha == 0 && inv_shown InvToggle(id,false);
+		if (image_alpha == 0 && inv_shown) InvToggle(id,false);
 	break;
-	case true: //Open
-		if !inv_shown InvToggle(id,true);
+	case INV_STATE.open: //Open
+		if (!inv_shown) InvToggle(id,true);
 		if image_alpha < 1 {
 			image_alpha = ReachTween(image_alpha, 1, 3);
 			image_xscale = ReachTween(image_xscale, 1, 3);
@@ -25,27 +25,27 @@ switch(inv_states) {
 
 #endregion
 
-if !inv_states exit;
+if inv_states == INV_STATE.close exit;
 
-//Grab mouse_x_to_gui and mouse_y_to_dui from Inventories control object
-var m_x = oInvControl.m_x;
-var m_y = oInvControl.m_y;
+//Get mouse_x_to_gui and mouse_y_to_dui position
+var m_x = device_mouse_x_to_gui(0);
+var m_y = device_mouse_y_to_gui(0);
 
 #region Selecting slot
 
 //Select slot if mouse on
 var ii = 0;
-if GetInvOnTop() == id
+if GetInvOnTop() == self
 repeat(inv_slots) {
 	if inv_item[# ii, items_flags.slot_is_bar] break;
 	
 	var slot_direct_x = inv_item[# ii, items_flags.slot_direct_x];
 	var slot_direct_y = inv_item[# ii, items_flags.slot_direct_y];
 	
-	if m_x >= invPosX+slot_direct_x*(cellSize+inv_cell_indent) &&
-	m_x < invPosX+slot_direct_x*(cellSize+inv_cell_indent)+cellSize &&
-	m_y >= invPosY+slot_direct_y*(cellSize+inv_cell_indent) &&
-	m_y < invPosY+slot_direct_y*(cellSize+inv_cell_indent)+cellSize 
+	if	m_x >= invPosX + slot_direct_x*(cellSize+inv_cell_indent) &&
+		m_x < invPosX + slot_direct_x*(cellSize+inv_cell_indent) + cellSize &&
+		m_y >= invPosY + slot_direct_y*(cellSize+inv_cell_indent) &&
+		m_y < invPosY + slot_direct_y*(cellSize+inv_cell_indent) + cellSize 
 	{
 		selected_slot = ii;
 		
@@ -58,18 +58,12 @@ repeat(inv_slots) {
 	ii++;
 }
 
-//Redraw Inventory if mouse moved to another slot
-//if last_selected_slot != selected_slot {
-//	InvRedraw();
-//	last_selected_slot = selected_slot;
-//}
-
 #endregion
 
 #region Move items
 //Click to slots
 if selected_slot!=-1
-if mouse_check_button_pressed(mb_left) && GetInvOnTop() == id
+if mouse_check_button_pressed(mb_left) && GetInvOnTop() == self
 {
 	if InvGetSlot(selected_slot, items_flags.item) //If there is an item in the slot
 	{
@@ -80,10 +74,10 @@ if mouse_check_button_pressed(mb_left) && GetInvOnTop() == id
 		//Move item to another inventory with Shift button
 		if keyboard_check(vk_shift)
 		{
-			if id != global.InvMainID {
+			if self != global.InvMainID {
 				InvMoveItemToInv(global.InvMainID,selected_slot);
 			} else {
-				if global.InvLastSelectedID!=-1 && global.InvLastSelectedID.inv_states 
+				if global.InvLastSelectedID!=-1 && global.InvLastSelectedID.inv_states == INV_STATE.open
 				InvMoveItemToInv(global.InvLastSelectedID,selected_slot);
 			}
 		} 
@@ -146,7 +140,7 @@ if mouse_check_button_pressed(mb_left) && GetInvOnTop() == id
 }
 else
 {
-	if mouse_check_button_pressed(mb_right) && GetInvOnTop() == id
+	if mouse_check_button_pressed(mb_right) && GetInvOnTop() == self
 	{
 		//If nothing in hand
 		if !InvGetHandSlot(items_flags.item)
@@ -213,17 +207,22 @@ if (m_x>l_side && m_x<r_side) && (m_y>t_side && m_y<b_side)
 {
 	//Change depth and select
 	if (mouse_check_button_pressed(mb_left)) 
-	if GetInvOnTop() == id
+	if GetInvOnTop() == self
 	{
 		if !inv_selected {
+			//Change depth for all inventories and unselect
 			with(oInventory) {
-				depth=clamp(depth+1,-99,0);
+				depth = clamp(depth+1,-99,0);
 				inv_selected = false;
-				InvRedraw();
 			}
+			//Redraw last selected
+			if global.InvLastSelectedID != -1 {
+				InvRedraw(global.InvLastSelectedID);
+			}
+			//Bring up on top selected inventory
 			depth = -99;
 			inv_selected = true;
-			if id!=global.InvMainID global.InvLastSelectedID = id;
+			if (self != global.InvMainID) global.InvLastSelectedID = self;
 			InvRedraw();
 		}
 		

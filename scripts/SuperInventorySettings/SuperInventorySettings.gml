@@ -66,6 +66,11 @@ enum items_flags {
 	inv_specs_height	//don't change this line
 }
 
+enum INV_STATE {
+	open,
+	close
+}
+
 #endregion
 
 #region //================ SYSTEM ================// (DON'T TOUCH)
