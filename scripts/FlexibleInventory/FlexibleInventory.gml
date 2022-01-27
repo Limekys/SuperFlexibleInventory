@@ -392,7 +392,7 @@ function InvDropAll(inventory, x, y, action_with_drop = undefined) {
 			if InvGetSlot(i,items_flags.item) {
 				var _drop = InvDropSlot(self, i, x, y);
 				if action_with_drop != undefined
-				method(_drop, action_with_drop)();
+				method(_drop, action_with_drop)(); //execute event fucntion for drop items
 			}
 		}
 	}
@@ -636,13 +636,18 @@ function InvMoveItemToInv(inventory, slot) {
 
 function InvRecalculateSurfaceSize() {
 	///@desc Recalculate inventory surface size
-	
-	surface_free(inv_surf);
-	inv_surf = -1;
 
 	cellSize = inv_slot_spr ? sprite_get_width(inv_slot_spr) : global.InvSlotSize;
 	inv_surf_w = inv_width*(cellSize+inv_cell_indent) + inv_left_border + inv_right_border;
 	inv_surf_h = inv_height*(cellSize+inv_cell_indent) + inv_head_border + inv_top_border + inv_bottom_border;
+	
+	if inv_back_spr != undefined
+	if sprite_get_width(inv_back_spr) > inv_surf_w || sprite_get_height(inv_back_spr) > inv_surf_h {
+		inv_surf_w = sprite_get_width(inv_back_spr);
+		inv_surf_h = sprite_get_height(inv_back_spr);
+	}
+	
+	InvRedraw();
 }
 
 #endregion
@@ -699,12 +704,6 @@ function InvSetMainSlotSprite(inventory, sprite) {
 		inv_slot_spr = sprite;
 	
 		InvRecalculateSurfaceSize();
-	
-		//recalculate inv surf size if background sprite was changed before
-		if inv_back_spr != noone
-		InvSetBackSprite(self, inv_back_spr);
-	
-		surface_free(inv_surf);
 	}
 }
 
@@ -714,11 +713,7 @@ function InvSetBackSprite(inventory, sprite) {
 	with(inventory) {
 		inv_back_spr = sprite;
 
-		//recalculate inv surf size if background sprite width or height above previous surf size
-		if sprite_get_width(inv_back_spr) > inv_surf_w || sprite_get_height(inv_back_spr) > inv_surf_h {
-			inv_surf_w = sprite_get_width(inv_back_spr);
-			inv_surf_h = sprite_get_height(inv_back_spr);
-		}
+		InvRecalculateSurfaceSize();
 	}
 }
 
@@ -833,11 +828,6 @@ function InvSetBordersSize(inventory, left, right, head, top, bottom) {
 		inv_bottom_border = bottom;
 
 		InvRecalculateSurfaceSize();
-	
-		//recalculate inv surf size if background sprite was changed before
-		if (inv_back_spr != noone) InvSetBackSprite(self, inv_back_spr);
-	
-		surface_free(inv_surf);
 	}
 }
 

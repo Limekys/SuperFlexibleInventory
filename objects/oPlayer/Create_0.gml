@@ -4,7 +4,6 @@ inventory = InvCreate(9,3);
 InvSetMain(inventory);
 InvSetName(inventory,"Player inventory");
 InvSetPosition(inventory, 64, 128);
-//InvSetBordersSize(inventory, 16, 16, 48, 16, 16);
 InvSetCursorSprite(inventory, sInvCursor);
 InvSetIndentOfCell(inventory, 1);
 
