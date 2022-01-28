@@ -620,8 +620,8 @@ function InvRecalculateSurfaceSize() {
 	///@desc Recalculate inventory surface size
 
 	cellSize = inv_slot_spr ? sprite_get_width(inv_slot_spr) : global.InvSlotSize;
-	inv_surf_w = inv_width*(cellSize+inv_cell_indent) + inv_left_border + inv_right_border;
-	inv_surf_h = inv_height*(cellSize+inv_cell_indent) + inv_head_border + inv_top_border + inv_bottom_border;
+	inv_surf_w = inv_width*(cellSize + inv_cell_indent) - inv_cell_indent + inv_left_border + inv_right_border;
+	inv_surf_h = inv_height*(cellSize + inv_cell_indent) - inv_cell_indent + inv_head_border + inv_top_border + inv_bottom_border;
 	
 	if inv_back_spr != undefined
 	if sprite_get_width(inv_back_spr) > inv_surf_w || sprite_get_height(inv_back_spr) > inv_surf_h {

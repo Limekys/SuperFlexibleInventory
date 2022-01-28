@@ -28,7 +28,7 @@
     "path": "folders/Objects/Example.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oInit",
+  "name": "oExample",
   "tags": [],
   "resourceType": "GMObject",
 }

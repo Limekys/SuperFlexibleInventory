@@ -7,6 +7,7 @@ InvSetMainSlotSprite(chest,sInvSlotChest);
 InvSetColors(chest,$01599C,$014579,$003156,c_ltgray);
 InvSetBackSprite(chest,sInvBackChest);
 InvSetBordersSize(chest, 4 + 36, 4, 32, 4, 4);
+InvSetIndentOfCell(chest, 1);
 InvSetCursorSprite(chest, noone);
 InvSetSounds(chest, sndInvOpen, sndInvClose);
 

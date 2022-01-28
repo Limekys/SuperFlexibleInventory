@@ -30,6 +30,7 @@ InvToggleAnim(inventory, INV_STATE.open);
 equipment = InvCreate(2,4,5);
 InvSetName(equipment, global.TEXT[global.language][2]);
 InvSetPosition(equipment, inventory.invPosX + inventory.inv_surf_w + 8, inventory.invPosY);
+InvSetIndentOfCell(equipment, 1);
 
 head_slot = 0;
 chestplate_slot = 1;
@@ -68,9 +69,10 @@ InvSetMainSlotSprite(space_inv, sSpaceInvSlot);
 InvToggleAnim(space_inv, true);
 */
 
+//Other test inventory for example
 test = InvCreate(2, 2);
-InvSetName(test, "SUPER INVENTORY!");
-InvToggleAnim(test, true);
-InvSetColors(test, $19957C, $24D4B1, $19957C, $60F2D5);
-InvSetIndentOfCell(test, 1);
-InvSetPosition(test, test.invPosX - test.inv_surf_w, test.invPosY + test.inv_surf_h);
+InvSetName(test, "SUPER! EASY!");
+InvSetColors(test, $19957C, $24D4B1, $24D4B1, $60F2D5);
+InvSetIndentOfCell(test, 16);
+InvSetPosition(test, inventory.invPosX + inventory.inv_surf_w div 2, inventory.invPosY + inventory.inv_surf_h + 16);
+InvToggleAnim(test, INV_STATE.open);
