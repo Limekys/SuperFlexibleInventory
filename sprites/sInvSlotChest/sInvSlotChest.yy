@@ -70,7 +70,7 @@
   "nineSlice": null,
   "parent": {
     "name": "Example",
-    "path": "folders/Graphics/Example.yy",
+    "path": "folders/Inventory system (Important)/Graphics/Example.yy",
   },
   "resourceVersion": "1.0",
   "name": "sInvSlotChest",

@@ -75,8 +75,8 @@
     "PhysicsWorldPixToMetres": 0.1,
   },
   "parent": {
-    "name": "Rooms",
-    "path": "folders/Rooms.yy",
+    "name": "Example",
+    "path": "folders/Example.yy",
   },
   "resourceVersion": "1.0",
   "name": "rGame_example",

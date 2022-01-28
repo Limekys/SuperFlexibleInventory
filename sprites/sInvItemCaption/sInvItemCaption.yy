@@ -94,7 +94,7 @@
   },
   "parent": {
     "name": "Inventory system (important)",
-    "path": "folders/Graphics/Inventory system (important).yy",
+    "path": "folders/Inventory system (Important)/Graphics/Inventory system (important).yy",
   },
   "resourceVersion": "1.0",
   "name": "sInvItemCaption",

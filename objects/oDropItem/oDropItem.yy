@@ -24,8 +24,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Inventory system (Important)",
-    "path": "folders/Objects/Inventory system (Important).yy",
+    "name": "Objects",
+    "path": "folders/Inventory system (Important)/Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oDropItem",

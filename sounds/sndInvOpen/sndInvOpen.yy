@@ -1,4 +1,5 @@
 {
+  "conversionMode": 0,
   "compression": 0,
   "volume": 0.3,
   "preload": false,
@@ -14,7 +15,7 @@
   "duration": 0.7129,
   "parent": {
     "name": "Sounds",
-    "path": "folders/Sounds.yy",
+    "path": "folders/Inventory system (Important)/Sounds.yy",
   },
   "resourceVersion": "1.0",
   "name": "sndInvOpen",

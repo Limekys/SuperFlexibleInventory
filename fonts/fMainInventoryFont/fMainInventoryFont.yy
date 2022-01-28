@@ -205,8 +205,8 @@
   "canGenerateBitmap": true,
   "maintainGms1Font": false,
   "parent": {
-    "name": "Graphics",
-    "path": "folders/Graphics.yy",
+    "name": "Inventory system (important)",
+    "path": "folders/Inventory system (Important)/Graphics/Inventory system (important).yy",
   },
   "resourceVersion": "1.0",
   "name": "fMainInventoryFont",

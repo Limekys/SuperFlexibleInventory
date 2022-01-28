@@ -74,7 +74,7 @@
             {"id":"39fa94b1-7cc4-42f1-a344-f37cd1bdc29e","Key":6.0,"Length":1.0,"Stretch":false,"Disabled":false,"IsCreationKey":false,"Channels":{"0":{"Id":{"name":"47fa6725-c599-499c-8708-d5b1d235f278","path":"sprites/sSpaceInvBack/sSpaceInvBack.yy",},"resourceVersion":"1.0","resourceType":"SpriteFrameKeyframe",},},"resourceVersion":"1.0","resourceType":"Keyframe<SpriteFrameKeyframe>",},
             {"id":"766dac7f-8c30-4f1d-9ebb-59a0dfad0245","Key":7.0,"Length":1.0,"Stretch":false,"Disabled":false,"IsCreationKey":false,"Channels":{"0":{"Id":{"name":"b893f942-2dfe-41c0-a880-d19eb766d259","path":"sprites/sSpaceInvBack/sSpaceInvBack.yy",},"resourceVersion":"1.0","resourceType":"SpriteFrameKeyframe",},},"resourceVersion":"1.0","resourceType":"Keyframe<SpriteFrameKeyframe>",},
             {"id":"b11e8c86-1ace-4095-95a5-dc46e957e90c","Key":8.0,"Length":1.0,"Stretch":false,"Disabled":false,"IsCreationKey":false,"Channels":{"0":{"Id":{"name":"31456578-1552-478e-ba2c-363dea98b710","path":"sprites/sSpaceInvBack/sSpaceInvBack.yy",},"resourceVersion":"1.0","resourceType":"SpriteFrameKeyframe",},},"resourceVersion":"1.0","resourceType":"Keyframe<SpriteFrameKeyframe>",},
-          ],"resourceVersion":"1.0","resourceType":"KeyframeStore<SpriteFrameKeyframe>",},"trackColour":0,"inheritsTrackColour":true,"builtinName":0,"traits":0,"interpolation":1,"tracks":[],"events":[],"modifiers":[],"isCreationTrack":false,"resourceVersion":"1.0","tags":[],"resourceType":"GMSpriteFramesTrack",},
+          ],"resourceVersion":"1.0","resourceType":"KeyframeStore<SpriteFrameKeyframe>",},"trackColour":0,"inheritsTrackColour":true,"builtinName":0,"traits":0,"interpolation":1,"tracks":[],"events":[],"isCreationTrack":false,"resourceVersion":"1.0","tags":[],"resourceType":"GMSpriteFramesTrack","modifiers":[],},
     ],
     "visibleRange": {"x":0.0,"y":0.0,},
     "lockOrigin": false,
@@ -102,7 +102,7 @@
   "nineSlice": null,
   "parent": {
     "name": "Under construction (Not important)",
-    "path": "folders/Graphics/Under construction (Not important).yy",
+    "path": "folders/Inventory system (Important)/Graphics/Under construction (Not important).yy",
   },
   "resourceVersion": "1.0",
   "name": "sSpaceInvBack",
