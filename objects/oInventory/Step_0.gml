@@ -213,11 +213,11 @@ if (m_x>l_side && m_x<r_side) && (m_y>t_side && m_y<b_side)
 			//Change depth for all inventories and unselect
 			with(oInventory) {
 				depth = clamp(depth+1,-99,0);
-				inv_selected = false;
-			}
-			//Redraw last selected
-			if global.InvLastSelectedID != -1 {
-				InvRedraw(global.InvLastSelectedID);
+				//Deselect and redraw if was selected
+				if inv_selected == true {
+					inv_selected = false;
+					InvRedraw();
+				}
 			}
 			//Bring up on top selected inventory
 			depth = -99;

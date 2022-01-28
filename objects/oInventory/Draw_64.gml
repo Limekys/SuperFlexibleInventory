@@ -37,9 +37,9 @@ if InvGetState(self) == INV_STATE.open && !surface_exists(inv_surf)
 	if inv_selected == true && global.InvShowSelected == true {
 		//Selected inventory color
 		draw_set_color(c_white);
-		draw_rectangle(0, 0, inv_surf_w -1, inv_surf_h -1, true);
+		draw_rectangle(1, 1, inv_surf_w -2, inv_surf_h -2, true);
 	} else {
-		if !inv_back_spr && !inv_back_spr_nine_slice {
+		if inv_back_spr == noone && inv_back_spr_nine_slice == noone {
 			//Default color of inventory window
 			draw_set_color(inv_border_color);
 			draw_rectangle(0, 0, inv_surf_w -1, inv_surf_h -1, true);

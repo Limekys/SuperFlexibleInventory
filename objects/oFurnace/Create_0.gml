@@ -4,7 +4,7 @@ image_index = 0;
 #region Setting up furnace inventory
 
 furnace = InvCreate(3,3,5);
-InvSetName(furnace,"Furnace " + "(" + string(id) + ")");
+InvSetName(furnace, global.TEXT[global.language][4] + " (" + string(id) + ")");
 
 //InvSetMainSlotSprite(furnace,sFurnaceBack)
 //InvSetBackSprite(furnace,sFurnaceBack)
@@ -43,10 +43,11 @@ readyResult = 0; //Raw Material progress
 for (var i = 0; i < sprite_get_number(global.InvItemsSprite)+1; ++i) {
     recipe[i] = 0;
 }
-recipe[ITEM.sand] = ITEM.glass_block;
-recipe[ITEM.iron_ore] = ITEM.iron_ingot;
-recipe[ITEM.gold_ore] = ITEM.gold_ingot;
 recipe[ITEM.pork] = ITEM.roast_pork;
+recipe[ITEM.iron_helmet] = ITEM.iron_ingot;
+recipe[ITEM.iron_chestplate] = ITEM.iron_ingot;
+recipe[ITEM.iron_leggings] = ITEM.iron_ingot;
+recipe[ITEM.iron_boots] = ITEM.iron_ingot;
 
 #endregion
 

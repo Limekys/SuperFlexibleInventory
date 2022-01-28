@@ -9,16 +9,7 @@ function Chance(_value) {
 
 function Wave(_from, _dest, _duration, _offset) {
 	//Wave(from, to, duration, offset)
-
 	// Returns a value that will wave back and forth between [from-to] over [duration] seconds
-	// Examples
-	//      image_angle = Wave(-45,45,1,0)  -> rock back and forth 90 degrees in a second
-	//      x = Wave(-10,10,0.25,0)         -> move left and right quickly
-
-	// Or here is a fun one! Make an object be all squishy!! ^u^
-	//      image_xscale = Wave(0.5, 2.0, 1.0, 0.0)
-	//      image_yscale = Wave(2.0, 0.5, 1.0, 0.0)
-
 	var a4 = (_dest - _from) * 0.5;
 	return _from + a4 + sin((((current_time * 0.001) + _duration * _offset) / _duration) * (pi*2)) * a4;
 }
@@ -34,14 +25,6 @@ function DrawSetText(_color, _font, _haling, _valing, _alpha) {
 	draw_set_halign(_haling);
 	draw_set_valign(_valing);
 	draw_set_alpha(_alpha);
-}
-
-function DrawTextShadow(_x, _y, _string) {
-	var _colour = draw_get_colour();
-	draw_set_colour(c_black);
-	draw_text(_x+1, _y+1, _string);
-	draw_set_colour(_colour);
-	draw_text(_x, _y, _string);
 }
 
 function draw_text_outline(_x, _y, _string, _outwidth, _outcolor, _outfidelity) {
@@ -64,12 +47,3 @@ function draw_text_outline(_x, _y, _string, _outwidth, _outcolor, _outfidelity) 
 	draw_set_color(dto_dcol);
 	draw_text(_x,_y,_string);
 }
-
-function DrawHealthbar(x, y, sprite, hp, maxhp) {
-	///@desc DrawHealthbar(x,y,sprite,hp,maxhp)
-	var _sprite_width = sprite_get_width(sprite);
-	var _sprite_height = sprite_get_height(sprite);
-	draw_sprite(sprite, 0, x, y);
-	draw_sprite_part(sprite, 1, 0, 0, _sprite_width/maxhp*hp, _sprite_height, x, y);
-}
-

@@ -408,24 +408,6 @@ function InvCloseAll() {
 
 #region //===SYSTEM===//
 
-function AddItemProperty() {
-	///@desc Add item property
-	///@args item,[prop,value,...]
-	
-	var item = argument[0];
-	var i = 1;
-	repeat((argument_count-1)/2) {
-		global.item_props[item][argument[i]] = argument[i+1];
-		i+=2;
-	}
-}
-
-function GetProp(item, property) {
-	///@desc Get specified property of item
-	
-	return global.item_props[item][property];
-}
-
 function InvRedraw(_inv = self) {
 	with(_inv) {
 		if surface_exists(inv_surf) surface_free(inv_surf);

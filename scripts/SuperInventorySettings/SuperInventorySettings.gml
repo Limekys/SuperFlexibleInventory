@@ -5,9 +5,8 @@
 //Main sprite of all items
 global.InvItemsSprite = sItems;		
 	
-//Main slot sprite of all inventories 
-//(if set "noone" and a rectangle with the specified color will be drawn
-//instead of the sprite with default size slot)
+//The main sprite of the slot of all inventories. 
+//If you set "noone" then a rectangle with the specified color will be drawn.
 global.InvSlotSprite = noone;							
 	
 //Special slot sprite (like silhouette of chestplate/helmet/boots)

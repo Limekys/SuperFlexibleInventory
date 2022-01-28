@@ -1,7 +1,7 @@
 #region Setting up chest inventory
 
 chest = InvCreate(3,3);
-InvSetName(chest, "Chest " + "(" + string(id) + ")");
+InvSetName(chest, global.TEXT[global.language][3] + " (" + string(id) + ")");
 InvShowName(chest, false);
 InvSetMainSlotSprite(chest,sInvSlotChest);
 InvSetColors(chest,$01599C,$014579,$003156,c_ltgray);
@@ -14,7 +14,7 @@ var ii = 0;
 repeat (chest.inv_slots) {
 	//fill inventory
 	if Chance(0.5) {
-		var _item = 1+irandom(ITEM.item_number-1);
+		var _item = 1 + irandom(ITEM.item_number-2);
 		InvSetSlotItem(chest, ii, _item,
 		irandom_range(1,GetProp(_item, ALL_PROPS.maxstack)), 
 		choose(GetProp(_item, ALL_PROPS.hp),GetProp(_item, ALL_PROPS.hp)/2,GetProp(_item, ALL_PROPS.hp)/8), 

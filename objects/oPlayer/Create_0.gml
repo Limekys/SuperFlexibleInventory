@@ -2,7 +2,7 @@
 
 inventory = InvCreate(9,3);
 InvSetMain(inventory);
-InvSetName(inventory,"Player inventory");
+InvSetName(inventory, global.TEXT[global.language][1]);
 InvSetPosition(inventory, 64, 128);
 InvSetCursorSprite(inventory, sInvCursor);
 InvSetIndentOfCell(inventory, 1);
@@ -11,16 +11,12 @@ var ii = 0;
 repeat (inventory.inv_slots) {
 	//fill inventory
 	if Chance(0.9) {
-		var _item = 1+irandom(ITEM.item_number-1);
+		var _item = 1 + irandom(ITEM.item_number-2);
 		InvSetSlotItem(inventory, ii, _item,
 		irandom_range(1,GetProp(_item, ALL_PROPS.maxstack)), 
 		choose(GetProp(_item, ALL_PROPS.hp),GetProp(_item, ALL_PROPS.hp)/2,GetProp(_item, ALL_PROPS.hp)/8), 
 		Chance(0.25) && GetProp(_item, ALL_PROPS.type) == TYPE.tool ? true : false);
 	}
-	
-	if ii < 9
-	InvSetSlotSprite(inventory, ii, sInvSlotHot);
-	
 	//inc
 	ii++;
 }
@@ -32,7 +28,7 @@ InvToggleAnim(inventory, INV_STATE.open);
 #region Equipment inventory
 
 equipment = InvCreate(2,4,5);
-InvSetName(equipment, "Equipment");
+InvSetName(equipment, global.TEXT[global.language][2]);
 InvSetPosition(equipment, inventory.invPosX + inventory.inv_surf_w + 8, inventory.invPosY);
 
 head_slot = 0;

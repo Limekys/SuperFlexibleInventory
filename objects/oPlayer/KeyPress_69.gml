@@ -1,2 +1,2 @@
-InvToggleAnim(inventory);
 InvToggleAnim(equipment);
+InvToggleAnim(inventory);
