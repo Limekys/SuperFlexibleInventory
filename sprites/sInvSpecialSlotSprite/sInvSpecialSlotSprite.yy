@@ -85,8 +85,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Inventory system (important)",
-    "path": "folders/Inventory system (Important)/Graphics/Inventory system (important).yy",
+    "name": "Graphics",
+    "path": "folders/Inventory system (Important)/Graphics.yy",
   },
   "resourceVersion": "1.0",
   "name": "sInvSpecialSlotSprite",

@@ -24,8 +24,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Example",
-    "path": "folders/Example.yy",
+    "name": "Objects",
+    "path": "folders/Example/Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oExample",

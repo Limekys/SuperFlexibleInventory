@@ -73,8 +73,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Example",
-    "path": "folders/Inventory system (Important)/Graphics/Example.yy",
+    "name": "Graphics",
+    "path": "folders/Example/Graphics.yy",
   },
   "resourceVersion": "1.0",
   "name": "sFurnace",
