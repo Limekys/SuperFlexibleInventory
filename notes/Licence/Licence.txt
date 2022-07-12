@@ -1,7 +1,4 @@
-Asset "Super Flexible Inventory" made by Anatoly Veremyev (Limekys).
+Asset "Flexible Inventory" made by Limekys
+Version 2.0
 
-v 1.1
-
-I allow you to use this Asset in your games and change it like you want, 
-even in commercial plans with attribution, 
-but I forbid you to distribute the Asset by itself for free.
+I give you permission to use this asset in your games and modify it as you see fit, even in commercial plans, but with attribution.
