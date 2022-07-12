@@ -1,3 +1,5 @@
+
+
 #region //===MAIN===//
 
 ///@desc Create a new inventory
@@ -32,8 +34,8 @@ function InvCreate(width, height, slot_number = undefined) {
 		self.inv_sound_close = noone;
 		
 		//Colors
-		self.inv_back_color = $333333;
-		self.inv_top_color = $222222;
+		self.inv_back_color = #333333;
+		self.inv_top_color = #222222;
 		self.inv_border_color = inv_top_color;
 		self.inv_slot_color = c_ltgray;
 		
@@ -56,7 +58,7 @@ function InvCreate(width, height, slot_number = undefined) {
 		self.inv_surf = -1;
 		
 		//Cells of items
-		self.inv_item = ds_grid_create(inv_slots, items_flags.inv_specs_height);
+		self.inv_item = ds_grid_create(inv_slots, items_flags.enum_lenght);
 		
 		//Surface size
 		self.inv_surf_w = inv_width*(cellSize+inv_cell_indent) + inv_left_border + inv_right_border;
@@ -85,8 +87,8 @@ function InvCreate(width, height, slot_number = undefined) {
 		}
 		
 		//Set position (center of the screen for default)
-		self.invPosX = _SINV_GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
-		self.invPosY = _SINV_GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
+		self.invPosX = _FINV_GUI_WIDTH div 2 - inv_surf_w div 2; //X position of inventory
+		self.invPosY = _FINV_GUI_HEIGHT div 2 - inv_surf_h div 2; //Y position of inventory
 		
 		InvRedraw();
 		
@@ -158,7 +160,7 @@ function InvToggleAnim(inventory, state = undefined) {
 
 ///@desc Clear slot
 function InvSlotClear(slot) {
-	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+	for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 		inv_item[# slot, i] = 0;
 	}
 }
@@ -171,7 +173,7 @@ function InvItemAdd(inventory, slot, item) {
 		}
 	
 		if inv_item[# slot, items_flags.item] == item
-		if inv_item[# slot, items_flags.count] < GetProp(inv_item[# slot, items_flags.item], ALL_PROPS.maxstack) {
+		if inv_item[# slot, items_flags.count] < GetProp(inv_item[# slot, items_flags.item], ITEM_PROPS.maxstack) {
 			inv_item[# slot, items_flags.count]++;
 			return true;
 		}
@@ -197,7 +199,7 @@ function InvItemSub(inventory, slot) {
 
 ///@desc Initialize drop data (called in the create event of a drop object)
 function InvDropInit() {
-	drop_data = array_create(items_flags.inv_specs_height, 0);
+	drop_data = array_create(items_flags.enum_lenght, 0);
 
 	sprite_index = global.InvItemsSprite;
 	image_speed = 0;
@@ -209,7 +211,7 @@ function InvDropHand(_x, _y, _data, _count = undefined) {
 	
 	if global.ItemInHand[items_flags.item]
 	with (InvDropCreate(_x, _y, 1)) {
-		for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+		for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 			drop_data[i] = _data[i];
 		}
 		
@@ -218,7 +220,7 @@ function InvDropHand(_x, _y, _data, _count = undefined) {
 		
 		//if moving item is zero clear
 		if _data[@ items_flags.count] == 0 {
-			for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+			for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 				_data[@ i] = 0;
 			}
 		}
@@ -239,7 +241,7 @@ function InvDropSlot(_inventory, _slot, _x, _y, _count = undefined) {
 		if !inv_item[# _slot, items_flags.item] return false;
 	
 		var _drop = InvDropCreate(_x,_y,1);
-		for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+		for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 			_drop.drop_data[i] = inv_item[# _slot, i];
 		}
 		
@@ -277,7 +279,7 @@ function InvDropCreate() {
 		}
 	
 		if drop_data[items_flags.hp] <= 0
-		drop_data[items_flags.hp] = GetProp(_item, ALL_PROPS.hp);
+		drop_data[items_flags.hp] = GetProp(_item, ITEM_PROPS.hp);
 	
 		drop_data[items_flags.item] = _item;
 		image_index = drop_data[items_flags.item];
@@ -298,14 +300,14 @@ function InvAddDropToInv(inventory, data) {
 	
 		//if find same item
 		if find_slot > -1 {
-			while (inventory.inv_item[# find_slot,items_flags.count] < GetProp(inventory.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && data[@ items_flags.count] > 0) {
+			while (inventory.inv_item[# find_slot,items_flags.count] < GetProp(inventory.inv_item[# find_slot,items_flags.item], ITEM_PROPS.maxstack) && data[@ items_flags.count] > 0) {
 				inventory.inv_item[# find_slot,items_flags.count]++
 				data[@ items_flags.count]--
 			}
 			find_slot = InvFindItem(inventory, data[items_flags.item]);
 			//if all items moved
 			if data[@ items_flags.count]==0 {
-				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+				for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 					data[@ i] = 0;
 				}
 				return true;
@@ -313,7 +315,7 @@ function InvAddDropToInv(inventory, data) {
 		} else {
 			//if find free slot
 			if slot_free >= 0 {
-				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+				for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 					inventory.inv_item[# slot_free, i] = data[i];
 					data[@ i] = 0;
 				}
@@ -337,7 +339,7 @@ function InvAddItemToInv(_inv, _item, _count = undefined) {
 	
 		//if find same item
 		if find_slot >= 0 {
-			while (_inv.inv_item[# find_slot,items_flags.count] < GetProp(_inv.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && _count > 0) {
+			while (_inv.inv_item[# find_slot,items_flags.count] < GetProp(_inv.inv_item[# find_slot,items_flags.item], ITEM_PROPS.maxstack) && _count > 0) {
 				_inv.inv_item[# find_slot,items_flags.count]++
 				_count--
 			}
@@ -349,7 +351,7 @@ function InvAddItemToInv(_inv, _item, _count = undefined) {
 		} else {
 			//if find free slot
 			if slot_free >= 0 {
-				InvSetSlotExt(_inv,slot_free,items_flags.item,_item,items_flags.count,_count,items_flags.hp,GetProp(_item, ALL_PROPS.hp));
+				InvSetSlotExt(_inv,slot_free,items_flags.item,_item,items_flags.count,_count,items_flags.hp,GetProp(_item, ITEM_PROPS.hp));
 				return true;
 			} else {
 				return false;
@@ -455,9 +457,9 @@ function InvFindItem() {
 	with(argument[0]) {
 		for (var i = 0; i < inv_slots; ++i) {
 		    if inv_item[# i, items_flags.item] == argument[1] &&
-				inv_item[# i, items_flags.count] < GetProp(inv_item[# i, items_flags.item], ALL_PROPS.maxstack) &&
+				inv_item[# i, items_flags.count] < GetProp(inv_item[# i, items_flags.item], ITEM_PROPS.maxstack) &&
 				!inv_item[# i, items_flags.blocked_to_place_slot] &&
-				(inv_item[# i, items_flags.armor_type] == GetProp(argument[1], ALL_PROPS.cloth_type) ||
+				(inv_item[# i, items_flags.armor_type] == GetProp(argument[1], ITEM_PROPS.cloth_type) ||
 				InvGetSlot(i, items_flags.armor_type) == -1 || inv_item[# i, items_flags.armor_type] == armor_parameter)
 				{
 					return i;
@@ -470,7 +472,7 @@ function InvFindItem() {
 function InvSlotToHand(slot) {
 	///@desc Move item from slot to hand
 	
-	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+	for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 		global.ItemInHand[i] = inv_item[# slot, i];
 	}
 }
@@ -478,7 +480,7 @@ function InvSlotToHand(slot) {
 function InvHandClear() {
 	///@desc Clear item in hand
 	
-	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+	for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 		global.ItemInHand[i] = 0;
 	}
 }
@@ -486,7 +488,7 @@ function InvHandClear() {
 function InvHandToSlot(slot) {
 	///@desc Move item in hand to slot
 	
-	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+	for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 		inv_item[# slot, i] = global.ItemInHand[i];
 	}
 }
@@ -537,7 +539,7 @@ function InvSwapSlotWithHand(slot) {
 	
 	//Writing cell data to memory
 	var temp_inv_item = [0];
-	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+	for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 		temp_inv_item[i] = inv_item[# slot, i];
 	}
 
@@ -545,7 +547,7 @@ function InvSwapSlotWithHand(slot) {
 	InvHandToSlot(slot);
 
 	//Take an item in hand from memory
-	for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+	for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 		global.ItemInHand[i] = temp_inv_item[i];
 	}
 }
@@ -554,22 +556,22 @@ function InvMoveItemToInv(inventory, slot) {
 	///@desc Move item to specified inventory
 	
 	//While there is something to transfer and there is free space or the same item
-	while(inv_item[# slot, items_flags.count]>0 && (InvFindItem(inventory, ITEM.none, GetProp(inv_item[# slot, items_flags.item], ALL_PROPS.cloth_type)) > -1 or
+	while(inv_item[# slot, items_flags.count]>0 && (InvFindItem(inventory, ITEM.none, GetProp(inv_item[# slot, items_flags.item], ITEM_PROPS.cloth_type)) > -1 or
 	InvFindItem(inventory, inv_item[# slot, items_flags.item]) > -1)) {
 		
 		var find_slot = InvFindItem(inventory, inv_item[# slot, items_flags.item]);
-		var slot_free = InvFindItem(inventory, ITEM.none, GetProp(inv_item[# slot, items_flags.item], ALL_PROPS.cloth_type));
+		var slot_free = InvFindItem(inventory, ITEM.none, GetProp(inv_item[# slot, items_flags.item], ITEM_PROPS.cloth_type));
 	
 		//if find same item
 		if find_slot > -1 {
-			while (inventory.inv_item[# find_slot,items_flags.count] < GetProp(inventory.inv_item[# find_slot,items_flags.item], ALL_PROPS.maxstack) && inv_item[# slot, items_flags.count] > 0) {
+			while (inventory.inv_item[# find_slot,items_flags.count] < GetProp(inventory.inv_item[# find_slot,items_flags.item], ITEM_PROPS.maxstack) && inv_item[# slot, items_flags.count] > 0) {
 				inventory.inv_item[# find_slot,items_flags.count]++
 				inv_item[# slot, items_flags.count]--
 			}
 			find_slot = InvFindItem(inventory, inv_item[# slot, items_flags.item]);
 			//if all items moved
 			if inv_item[# slot, items_flags.count]==0 {
-				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+				for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 					inv_item[# slot, i] = 0;
 				}
 				InvRedraw(inventory);
@@ -578,7 +580,7 @@ function InvMoveItemToInv(inventory, slot) {
 		} else {
 			//if find free slot
 			if slot_free >= 0 {
-				for (var i = items_flags.item; i < items_flags.inv_specs_height; ++i) {
+				for (var i = items_flags.item; i < items_flags.enum_lenght; ++i) {
 					inventory.inv_item[# slot_free, i] = inv_item[# slot, i];
 					inv_item[# slot, i] = 0;
 				}
@@ -740,8 +742,8 @@ function InvSetSlotItem() {
 	var _inventory = argument[0];
 	var _slot = argument[1];
 	var _item = argument[2];
-	var _count = argument_count > 3 ? argument[3] : GetProp(_item, ALL_PROPS.maxstack);
-	var _hp = argument_count > 4 ? argument[4] : GetProp(_item, ALL_PROPS.hp);
+	var _count = argument_count > 3 ? argument[3] : GetProp(_item, ITEM_PROPS.maxstack);
+	var _hp = argument_count > 4 ? argument[4] : GetProp(_item, ITEM_PROPS.hp);
 	var _enchant = argument_count > 5 ? argument[5] : 0;
 
 	with(_inventory) {

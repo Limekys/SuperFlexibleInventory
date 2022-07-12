@@ -104,11 +104,11 @@ if InvGetState(self) == INV_STATE.open && !surface_exists(inv_surf)
 								1, c_black, 8);
 			
 			//Strength
-			if GetProp(DSinv[# ii, items_flags.item], ALL_PROPS.type) == TYPE.tool
-			&& DSinv[# ii, items_flags.hp] < GetProp(DSinv[# ii, items_flags.item], ALL_PROPS.hp)
+			if GetProp(DSinv[# ii, items_flags.item], ITEM_PROPS.type) == TYPE.tool
+			&& DSinv[# ii, items_flags.hp] < GetProp(DSinv[# ii, items_flags.item], ITEM_PROPS.hp)
 			draw_healthbar(slot_pos_x + 3, slot_pos_y + cellSize-8,
 							slot_pos_x + cellSize - 4, slot_pos_y + cellSize-4, 
-							(DSinv[# ii, items_flags.hp] / GetProp(DSinv[# ii, items_flags.item], ALL_PROPS.hp))*100,
+							(DSinv[# ii, items_flags.hp] / GetProp(DSinv[# ii, items_flags.item], ITEM_PROPS.hp))*100,
 							c_gray, c_red, c_green, 0, true, true);
 		}
 	

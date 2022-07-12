@@ -16,10 +16,10 @@ with(top_inv) {
 			var v_padding = 4;			//Vertical padding of caption size
 			
 			//Text
-			var item_name = item < ITEM.item_number ? global.ITEM_TEXT[global.language][item] : "uknown item " + string(item);
+			var item_name = item < ITEM.enum_lenght ? global.ITEM_TEXT[global.language][item] : "uknown item " + string(item);
 			var item_special = "";
-			if GetProp(item, ALL_PROPS.type) == TYPE.tool {
-				item_special = "\n" + global.TEXT[global.language][0] + string(GetProp(item, ALL_PROPS.tool_strength));
+			if GetProp(item, ITEM_PROPS.type) == TYPE.tool {
+				item_special = "\n" + global.TEXT[global.language][0] + string(GetProp(item, ITEM_PROPS.tool_strength));
 			}
 			var text = item_name + item_special;
 			

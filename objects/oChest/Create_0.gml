@@ -15,11 +15,11 @@ var ii = 0;
 repeat (chest.inv_slots) {
 	//fill inventory
 	if Chance(0.5) {
-		var _item = 1 + irandom(ITEM.item_number-2);
+		var _item = 1 + irandom(ITEM.enum_lenght-2);
 		InvSetSlotItem(chest, ii, _item,
-		irandom_range(1,GetProp(_item, ALL_PROPS.maxstack)), 
-		choose(GetProp(_item, ALL_PROPS.hp),GetProp(_item, ALL_PROPS.hp)/2,GetProp(_item, ALL_PROPS.hp)/8), 
-		Chance(0.25) && GetProp(_item, ALL_PROPS.type) == TYPE.tool ? 1: 0);
+		irandom_range(1,GetProp(_item, ITEM_PROPS.maxstack)), 
+		choose(GetProp(_item, ITEM_PROPS.hp),GetProp(_item, ITEM_PROPS.hp)/2,GetProp(_item, ITEM_PROPS.hp)/8), 
+		Chance(0.25) && GetProp(_item, ITEM_PROPS.type) == TYPE.tool ? 1: 0);
 	}
 	//inc
 	ii++;

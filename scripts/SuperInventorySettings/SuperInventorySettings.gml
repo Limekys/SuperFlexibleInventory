@@ -47,6 +47,10 @@ global.InvDrawDebug = false;
 
 #region //================ MACROS ================// (You can change it like you want)
 
+//GUI width and height (you can insert your variables instead of a functions "display_get")
+#macro _FINV_GUI_WIDTH display_get_gui_width()
+#macro _FINV_GUI_HEIGHT display_get_gui_height()
+
 //Inventory slots enums
 enum items_flags {
 	slot_direct_x,
@@ -62,7 +66,7 @@ enum items_flags {
 	hp,
 	enchant,
 	
-	inv_specs_height	//don't change this line
+	enum_lenght	//don't change this line
 }
 
 enum INV_STATE {
@@ -74,16 +78,12 @@ enum INV_STATE {
 
 #region //================ SYSTEM ================// (DON'T TOUCH)
 
-//GUI width and height getters for better readability of the code
-#macro _SINV_GUI_WIDTH display_get_gui_width()
-#macro _SINV_GUI_HEIGHT display_get_gui_height()
-
 //Main inventory id
 global.InvMainID = -1;
 //Last active inventory id
 global.InvLastSelectedID = -1;
 //Hand data (item in hand, when you picked up it with mouse)
-global.ItemInHand = array_create(items_flags.inv_specs_height, 0);
+global.ItemInHand = array_create(items_flags.enum_lenght, 0);
 	
 #endregion
 

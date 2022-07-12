@@ -15,7 +15,7 @@ switch (os_get_language()) {
 }
 
 //Init default names
-for (var i = 0; i < ITEM.item_number; ++i) {
+for (var i = 0; i < ITEM.enum_lenght; ++i) {
     global.ITEM_TEXT[GAME_LANGUAGE.en][i] = "item_" + string(i);
     global.ITEM_TEXT[GAME_LANGUAGE.ru][i] = "предмет_" + string(i);
 }

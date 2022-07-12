@@ -49,7 +49,7 @@ repeat(inv_slots) {
 	{
 		selected_slot = ii;
 		
-		invItemMaxStack = GetProp(inv_item[# selected_slot, items_flags.item], ALL_PROPS.maxstack);
+		invItemMaxStack = GetProp(inv_item[# selected_slot, items_flags.item], ITEM_PROPS.maxstack);
 		
 		break;
 	}
@@ -93,7 +93,7 @@ if mouse_check_button_pressed(mb_left) && GetInvOnTop() == self
 			{ //If have an item in hand
 				//If slot is not blocked to place items in here
 				if !InvGetSlot(selected_slot, items_flags.blocked_to_place_slot) &&
-				(InvGetSlot(selected_slot, items_flags.armor_type) == GetProp(InvGetHandSlot(items_flags.item), ALL_PROPS.cloth_type)
+				(InvGetSlot(selected_slot, items_flags.armor_type) == GetProp(InvGetHandSlot(items_flags.item), ITEM_PROPS.cloth_type)
 				or InvGetSlot(selected_slot, items_flags.armor_type) == -1)
 				{
 					//If in slot the same item what in hand
@@ -123,7 +123,7 @@ if mouse_check_button_pressed(mb_left) && GetInvOnTop() == self
 	{
 		//if the cell is empty and there is an item in the hand and the slot is not locked to place the item in it
 		if InvGetHandSlot(items_flags.item) && !InvGetSlot(selected_slot, items_flags.blocked_to_place_slot)
-		&& (InvGetSlot(selected_slot, items_flags.armor_type) == GetProp(InvGetHandSlot(items_flags.item), ALL_PROPS.cloth_type)
+		&& (InvGetSlot(selected_slot, items_flags.armor_type) == GetProp(InvGetHandSlot(items_flags.item), ITEM_PROPS.cloth_type)
 		or InvGetSlot(selected_slot, items_flags.armor_type) == -1)
 		{
 			//Move item from hand to slot
@@ -168,7 +168,7 @@ else
 		{
 			//if the slot is not locked to place an item in it
 			if !InvGetSlot(selected_slot, items_flags.blocked_to_place_slot)
-			&& (InvGetSlot(selected_slot, items_flags.armor_type) == GetProp(InvGetHandSlot(items_flags.item), ALL_PROPS.cloth_type)
+			&& (InvGetSlot(selected_slot, items_flags.armor_type) == GetProp(InvGetHandSlot(items_flags.item), ITEM_PROPS.cloth_type)
 			or InvGetSlot(selected_slot, items_flags.armor_type) == -1)
 			{
 				//Play drop sound
@@ -238,8 +238,8 @@ if !global.InvDragAndDrop exit;
 
 if (mouse_check_button(mb_left)) && isdrag && inv_selected {
 	//Drag and drop and clamp
-	invPosX = clamp(m_x-offsetx, inv_left_border, _SINV_GUI_WIDTH - (inv_surf_w - inv_left_border));
-	invPosY = clamp(m_y-offsety, inv_head_border + inv_top_border, _SINV_GUI_HEIGHT - (inv_surf_h - inv_head_border - inv_top_border));
+	invPosX = clamp(m_x-offsetx, inv_left_border, _FINV_GUI_WIDTH - (inv_surf_w - inv_left_border));
+	invPosY = clamp(m_y-offsety, inv_head_border + inv_top_border, _FINV_GUI_HEIGHT - (inv_surf_h - inv_head_border - inv_top_border));
 }
 
 if (mouse_check_button_released(mb_left)) {
