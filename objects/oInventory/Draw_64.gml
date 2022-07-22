@@ -99,7 +99,7 @@ if InvGetState(self) == INV_STATE.open && !surface_exists(inv_surf)
 			//Amount
 			DrawSetText(c_white, global.InvMainFont, fa_center, fa_middle, 1);
 			if DSinv[# ii, items_flags.count]>1
-			draw_text_outline(slot_pos_x + cellSize*0.75, slot_pos_y + cellSize*0.75, 
+			DrawTextOutline(slot_pos_x + cellSize*0.75, slot_pos_y + cellSize*0.75, 
 								string(DSinv[# ii, items_flags.count]),
 								1, c_black, 8);
 			
@@ -120,7 +120,7 @@ if InvGetState(self) == INV_STATE.open && !surface_exists(inv_surf)
 	if inv_show_name
 	if inv_name != "" {
 		DrawSetText(c_white, global.InvMainFont, fa_left, fa_top, 1);
-		draw_text_outline(inv_left_border, inv_head_border div 3, inv_name, 1, c_black, 8);
+		DrawTextOutline(inv_left_border, inv_head_border div 3, inv_name, 1, c_black, 8);
 	}
 	
 	gpu_set_colorwriteenable(true,true,true,true);
@@ -198,30 +198,3 @@ if global.InvDrawDebug {
 
 //default
 DrawSetText(c_white, global.InvMainFont, fa_left, fa_top, 1);
-
-#region EFFECT OF ENCHANTED ITEM (UNDER CONSTRUCTION)
-/*
-	//if !surface_exists(enchant_surf) enchant_surf = surface_create(64,64);
-	
-	if DSinv[# ii, items_flags.enchant] {
-		
-		surface_set_target(enchant_surf);
-		
-		draw_clear_alpha(c_white, 0);
-		
-		draw_sprite(global.InvItemsSprite, DSinv[# ii, items_flags.item], 16, 16);
-		
-		gpu_set_colorwriteenable(1,1,1,0);
-		gpu_set_blendmode(bm_add);
-		draw_sprite_ext(sEnchantedEffect, 0, 32, 32, Wave(0.75,2,10,0), Wave(0.75,2,10,1), Wave(0,359,15,0), c_purple, 0.75);
-		gpu_set_blendmode(bm_normal);
-		gpu_set_colorwriteenable(1,1,1,1);
-		
-		surface_reset_target();
-		
-		draw_surface(enchant_surf,invPosX + ix*sprW, invPosY + iy*sprW);
-	} else {
-		draw_sprite(global.InvItemsSprite, DSinv[# ii, items_flags.item], invPosX + ix*sprW + 16, invPosY + iy*sprW + 16);
-	}
-	*/
-#endregion

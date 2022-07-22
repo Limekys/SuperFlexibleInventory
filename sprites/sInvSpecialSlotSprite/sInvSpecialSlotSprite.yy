@@ -86,7 +86,7 @@
   "nineSlice": null,
   "parent": {
     "name": "Graphics",
-    "path": "folders/Inventory system (Important)/Graphics.yy",
+    "path": "folders/SuperFlexibleInventory (Important)/Graphics.yy",
   },
   "resourceVersion": "1.0",
   "name": "sInvSpecialSlotSprite",

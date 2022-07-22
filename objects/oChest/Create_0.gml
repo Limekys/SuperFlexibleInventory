@@ -1,7 +1,7 @@
 #region Setting up chest inventory
 
 chest = InvCreate(3,3);
-InvSetName(chest, global.TEXT[global.language][3] + " (" + string(id) + ")");
+InvSetName(chest, global.TEXT[global.language][3] + " (" + string(real(id)) + ")");
 InvShowName(chest, false);
 InvSetMainSlotSprite(chest,sInvSlotChest);
 InvSetColors(chest,$01599C,$014579,$003156,c_ltgray);

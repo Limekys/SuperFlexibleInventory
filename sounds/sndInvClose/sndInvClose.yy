@@ -15,7 +15,7 @@
   "duration": 0.5563,
   "parent": {
     "name": "Sounds",
-    "path": "folders/Inventory system (Important)/Sounds.yy",
+    "path": "folders/SuperFlexibleInventory (Important)/Sounds.yy",
   },
   "resourceVersion": "1.0",
   "name": "sndInvClose",

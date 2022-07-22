@@ -8,9 +8,12 @@ var _result_count = InvGetSlotExt(furnace,result_slot,items_flags.count);
 var _fuel = InvGetSlotExt(furnace,fuel_bar_slot,items_flags.hp);
 
 //Furnace system
-if _material_item && _fuel_item && !_fuel && recipe[_material_item] //если есть сырье, если есть предмет топлива и топлива 0 и с этого сырья можно что-то приготовить
-&& GetProp(_fuel_item, ITEM_PROPS.fuel) && (recipe[_material_item] == _result_item || !_result_item) //если предмет в ячейке топлива имеет свойство топлива и в ячейке результата такойже предмет который можем приготовить, либо просто пусто
-&& _result_count < GetProp(_result_item, ITEM_PROPS.maxstack) //если стак результата не максимальный
+//if there is a raw material, if there is a fuel item and fuel is 0 and something can be cooked with this raw material
+//if there is a fuel item in the fuel slot and the result slot has the same item that can be cooked, or just empty
+//if the result stack is not maximal
+if _material_item && _fuel_item && !_fuel && recipe[_material_item]
+&& GetProp(_fuel_item, ITEM_PROPS.fuel) && (recipe[_material_item] == _result_item || !_result_item)
+&& _result_count < GetProp(_result_item, ITEM_PROPS.maxstack)
 {
 	//charge the furnace with fuel and take one item fuel from the slot
 	fuel = GetProp(_fuel_item, ITEM_PROPS.fuel);
@@ -20,10 +23,10 @@ if _material_item && _fuel_item && !_fuel && recipe[_material_item] //если �
 	InvRedraw(furnace);
 }
 
-//reduce fuel
+//Reduce fuel
 fuel = Approach(fuel, 0, 0.05);
 
-//main system
+//Main system
 //if there is fuel, there is raw material and with this raw material you can cook into the result that is already in the result cell
 //either in the result cell is empty and something can be prepared from this raw material
 if fuel > 0 && _material_item
@@ -33,7 +36,7 @@ readyResult = Approach(readyResult,100,0.1);
 else
 readyResult = Approach(readyResult,0,0.1); //otherwise cool
 
-//if result is 100%
+//Rresult
 if readyResult == 100
 {
 	//getting result
@@ -53,7 +56,7 @@ InvSetSlotExt(furnace,result_bar_slot,items_flags.hp,readyResult);
 image_index = sign(fuel);
 
 //Caption animation
-if collision_point(mouse_x, mouse_y, self, false, false) {
+if collision_point(mouse_x, mouse_y, oFurnace, false, false) == id {
 	anim = ReachTween(anim,1,7);
 } else {
 	anim = ReachTween(anim,0,7);

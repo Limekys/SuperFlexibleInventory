@@ -21,6 +21,7 @@
     "path": "texturegroups/Default",
   },
   "ascenderOffset": 2,
+  "ascender": 12,
   "glyphs": {
     "32": {"x":2,"y":2,"w":4,"h":18,"character":32,"shift":4,"offset":0,},
     "33": {"x":199,"y":82,"w":4,"h":18,"character":33,"shift":5,"offset":1,},
@@ -206,7 +207,7 @@
   "maintainGms1Font": false,
   "parent": {
     "name": "Graphics",
-    "path": "folders/Inventory system (Important)/Graphics.yy",
+    "path": "folders/SuperFlexibleInventory (Important)/Graphics.yy",
   },
   "resourceVersion": "1.0",
   "name": "fMainInventoryFont",

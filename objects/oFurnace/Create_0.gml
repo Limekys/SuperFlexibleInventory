@@ -4,7 +4,7 @@ image_index = 0;
 #region Setting up furnace inventory
 
 furnace = InvCreate(3,3,5);
-InvSetName(furnace, global.TEXT[global.language][4] + " (" + string(id) + ")");
+InvSetName(furnace, global.TEXT[global.language][4] + " (" + string(real(id)) + ")");
 
 //InvSetMainSlotSprite(furnace,sFurnaceBack)
 //InvSetBackSprite(furnace,sFurnaceBack)

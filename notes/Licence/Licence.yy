@@ -1,7 +1,7 @@
 {
   "parent": {
-    "name": "Inventory system (Important)",
-    "path": "folders/Inventory system (Important).yy",
+    "name": "SuperFlexibleInventory (Important)",
+    "path": "folders/SuperFlexibleInventory (Important).yy",
   },
   "resourceVersion": "1.1",
   "name": "Licence",

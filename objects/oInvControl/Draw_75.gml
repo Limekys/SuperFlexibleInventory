@@ -28,7 +28,7 @@ with(top_inv) {
 														m_y + mouse_offset_y - v_padding,
 														string_width(text) + h_padding * 2,
 														string_height(text) + v_padding * 2);
-			draw_text_outline(	m_x + mouse_offset_x, 
+			DrawTextOutline(	m_x + mouse_offset_x, 
 								m_y + mouse_offset_y, 
 								text, 1, c_black, 8);
 		}
@@ -47,7 +47,7 @@ if global.ItemInHand[items_flags.item] {
 	//Amount
 	DrawSetText(c_white, global.InvMainFont, fa_center, fa_middle, 1);
 	if global.ItemInHand[items_flags.count]>1
-	draw_text_outline(_spr_x + sprite_item_size - sprite_item_offset_x, _spr_y + sprite_item_size - sprite_item_offset_y, 
+	DrawTextOutline(_spr_x + sprite_item_size - sprite_item_offset_x, _spr_y + sprite_item_size - sprite_item_offset_y, 
 						string(global.ItemInHand[items_flags.count]),
 						1, c_black, 8);
 }

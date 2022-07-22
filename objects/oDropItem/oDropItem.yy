@@ -2,6 +2,7 @@
   "spriteId": null,
   "solid": false,
   "visible": true,
+  "managed": true,
   "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": null,
@@ -25,7 +26,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Objects",
-    "path": "folders/Inventory system (Important)/Objects.yy",
+    "path": "folders/SuperFlexibleInventory (Important)/Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oDropItem",
