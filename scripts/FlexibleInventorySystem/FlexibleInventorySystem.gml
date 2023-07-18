@@ -655,8 +655,8 @@ function InvSetMain(inventory) {
 }
 
 ///@desc Set name for specified inventory
-function InvSetName(inventory, name) {
-	inventory.inv_name = name;
+function InvSetName(sfi_inventory, sfi_name) {
+	sfi_inventory.inv_name = sfi_name;
 }
 
 ///@desc Set sprite to all slots in specified inventory (Sprite should be square!)
